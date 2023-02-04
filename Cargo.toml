@@ -1,5 +1,5 @@
 [package]
-name = "BoosterSimulator"
+name = "boosterSimulator"
 version = "0.1.0"
 edition = "2021"
 
@@ -8,3 +8,5 @@ edition = "2021"
 [dependencies]
 dioxus = "0.3.1"
 dioxus-desktop = "0.3.0"
+serde = "1.0.152"
+serde-xml-rs = "0.6.0"

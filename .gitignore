@@ -1,1 +1,6 @@
 /target
+sets
+ListOfCardDataFiles.txt
+formats.txt
+*.swp
+*.swo
