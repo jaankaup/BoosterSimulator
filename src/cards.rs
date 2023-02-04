@@ -19,8 +19,32 @@ pub struct Filetoinclude  {
     file: String
 }
 
-pub struct Card {
+#[derive(Debug)]
+pub struct CardInput {
+    name: String,
+    set: String,
+    imagefile: String,
+}
 
+#[allow(dead_code)]
+pub struct Card {
+    name: String,
+    set: String,
+    imagefile: String,
+    actualset: String,
+    color: String,
+    colorid: String,
+    cost: String,
+    manavalue: String,
+    card_type: String,
+    power: String,
+    toughness: String,
+    loyalty: String,
+    rarity: String,
+    draftqualities: String,
+    sound: String,
+    script: String,
+    text: String,
 }
 
 // #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -34,10 +58,6 @@ pub struct Card {
 //     #[serde(rename = "$value")]
 //     value: String
 // }
-
-pub struct Card {
-
-}
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Point {
@@ -53,16 +73,36 @@ pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     Ok(buffer)
 }
 
+pub fn load_cards() -> Vec<Card> {
+    let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
+    Vec::<Card>::new()
+}
+
 pub fn load_mtg() {
 
-	if let Ok(lines) = read_lines("./ListOfCardDataFiles.txt") {
-		// Consumes the iterator, returns an (Optional) String
-		for line in lines {
-			if let Ok(ip) = line {
-				println!("{}", ip);
-			}
-		}
-	}
+    let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
+
+    let mut cards = Vec::<CardInput>::new();
+
+    for list in card_lists.files_to_include {
+
+        //if let Ok(lines) = read_lines("./premodern-expansions.txt") {
+        if let Ok(lines) = read_lines(list.file) {
+        	// Consumes the iterator, returns an (Optional) String
+            let mut counter = 0;
+        	for line in lines {
+                    if let Ok(ip) = line {
+                        counter = counter + 1;
+                        if counter < 4 { continue };
+                        let ll = ip.split("\t").collect::<Vec<&str>>();
+                        if ll.len() < 2 { continue; }
+                        cards.push(CardInput { name: ll[0].to_string(), set: ll[1].to_string(), imagefile: ll[2].to_string() });
+                    }
+        	}
+        }
+    }
+    println!("{:?}", cards);
+    println!("The length == {:?}", cards.len());
 }
 
 // The output is wrapped in a Result to allow matching on errors

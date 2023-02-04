@@ -8,10 +8,11 @@ fn main() {
 //    pub struct Filetoinclude  {
     let card = Point {x:1, y:2}; 
     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
-    println!("{:?}", card_lists);
+    //println!("{:?}", card_lists);
     //println!("{:?}", load_list_of_cards().unwrap());
-    //load_mtg();
-    dioxus_desktop::launch(app);
+    load_mtg();
+
+    //dioxus_desktop::launch(app);
 }
 
 fn app(cx: Scope) -> Element {
