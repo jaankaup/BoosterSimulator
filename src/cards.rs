@@ -5,7 +5,7 @@ use std::io::{self, BufRead};
 use std::path::Path;
 use std::io::prelude::*;
 use std::error::Error;
-
+use std::collections::HashMap;
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Listofcarddatafiles {
@@ -78,11 +78,14 @@ pub fn load_cards() -> Vec<Card> {
     Vec::<Card>::new()
 }
 
-pub fn load_mtg() {
+pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
 
-    let mut cards = Vec::<CardInput>::new();
+    // let mut cards = Vec::<CardInput>::new();
+
+    // Create hashmap for sets.
+    let mut set_hash_map = HashMap::<String, Vec<CardInput>>::new(); 
 
     for list in card_lists.files_to_include {
 
@@ -96,13 +99,16 @@ pub fn load_mtg() {
                         if counter < 4 { continue };
                         let ll = ip.split("\t").collect::<Vec<&str>>();
                         if ll.len() < 2 { continue; }
-                        cards.push(CardInput { name: ll[0].to_string(), set: ll[1].to_string(), imagefile: ll[2].to_string() });
+
+                        set_hash_map.entry(ll[1].to_string()).or_default().push(CardInput { name: ll[0].to_string(), set: ll[1].to_string(), imagefile: ll[2].to_string() });
                     }
         	}
         }
     }
-    println!("{:?}", cards);
-    println!("The length == {:?}", cards.len());
+    // println!("{:?}", set_hash_map);
+    // println!("The length == {:?}", set_hash_map.keys().len());
+
+    set_hash_map
 }
 
 // The output is wrapped in a Result to allow matching on errors
