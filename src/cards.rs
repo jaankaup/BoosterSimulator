@@ -28,28 +28,6 @@ pub struct CardInput {
     imagefile: String,
 }
 
-
-// #[allow(dead_code)]
-// pub struct Card {
-//     name: String,
-//     set: String,
-//     imagefile: String,
-//     actualset: String,
-//     color: String,
-//     colorid: String,
-//     cost: String,
-//     manavalue: String,
-//     card_type: String,
-//     power: String,
-//     toughness: String,
-//     loyalty: String,
-//     rarity: String,
-//     draftqualities: String,
-//     sound: String,
-//     script: String,
-//     text: String,
-// }
-
 // LACKEY output formats.
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug)]
@@ -60,7 +38,8 @@ pub struct Deck<'a> {
     //#[xml(text)]
     #[xml(child = "meta")]
     meta: Meta<'a>,
-//    super_zone: SuperZone,
+    #[xml(child = "superzone")]
+    super_zone: SuperZone<'a>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
@@ -77,11 +56,13 @@ pub struct Game<'a> {
     name: Cow<'a, str>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
-pub struct SuperZone {
-    name: String,
-    #[serde(rename = "$value")]
-    cards: Vec<CardLackey>,
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "superzone")]
+pub struct SuperZone<'a> {
+    #[xml(attr = "name")]
+    name: Cow<'a, str>,
+    // #[serde(rename = "$value")]
+    // cards: Vec<CardLackey>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -112,6 +93,7 @@ pub fn to_lackey_test() {
         version: "0.8".into(),
         // meta: Meta { game: Game {name:"erkki"}}.into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}}.into(),
+        super_zone: SuperZone { name: std::borrow::Cow::Borrowed("Deck")}.into(),
 
         //meta: Meta { game: std::borrow::Cow::Borrowed("erkki")}.into(),
 
