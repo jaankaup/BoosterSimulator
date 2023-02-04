@@ -1,3 +1,5 @@
+use std::borrow::Cow;
+use strong_xml::{XmlRead, XmlWrite};
 use serde::{Serialize, Deserialize};
 use serde_xml_rs::{from_str, to_string};
 use std::fs::File;
@@ -19,50 +21,106 @@ pub struct Filetoinclude  {
     file: String
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CardInput {
     name: String,
     set: String,
     imagefile: String,
 }
 
-#[allow(dead_code)]
-pub struct Card {
-    name: String,
-    set: String,
-    imagefile: String,
-    actualset: String,
-    color: String,
-    colorid: String,
-    cost: String,
-    manavalue: String,
-    card_type: String,
-    power: String,
-    toughness: String,
-    loyalty: String,
-    rarity: String,
-    draftqualities: String,
-    sound: String,
-    script: String,
-    text: String,
+
+// #[allow(dead_code)]
+// pub struct Card {
+//     name: String,
+//     set: String,
+//     imagefile: String,
+//     actualset: String,
+//     color: String,
+//     colorid: String,
+//     cost: String,
+//     manavalue: String,
+//     card_type: String,
+//     power: String,
+//     toughness: String,
+//     loyalty: String,
+//     rarity: String,
+//     draftqualities: String,
+//     sound: String,
+//     script: String,
+//     text: String,
+// }
+
+// LACKEY output formats.
+
+#[derive(XmlWrite, XmlRead, PartialEq, Debug)]
+#[xml(tag = "deck")]
+pub struct Deck<'a> {
+    #[xml(attr = "version")]
+    version: Cow<'a, str>,
+    //#[xml(text)]
+    #[xml(child = "meta")]
+    meta: Meta<'a>,
+//    super_zone: SuperZone,
 }
 
-// #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// struct PlateAppearance {
-//     #[serde(rename = "$value")]
-//     events: Vec<Event>
-// }
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "meta")]
+pub struct Meta<'a> {
+    #[xml(child = "game")]
+    game: Game<'a>,
+}
 
-// #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// struct Content {
-//     #[serde(rename = "$value")]
-//     value: String
-// }
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "game")]
+pub struct Game<'a> {
+    #[xml(text)]
+    name: Cow<'a, str>,
+}
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Point {
-    pub x: i32,
-    pub y: i32,
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct SuperZone {
+    name: String,
+    #[serde(rename = "$value")]
+    cards: Vec<CardLackey>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CardLackey {
+    name: CardName,
+    set: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct CardName {
+    id: String,
+    #[serde(rename = "$value")]
+    name: String, 
+}
+
+pub fn to_lackey_test() {
+//    let deck = Deck {
+//        version: "0.8".to_string(),
+//        meta: Meta { game: "magic".to_string()},
+//        super_zone: SuperZone {
+//             name:"Deck".to_string(),
+//             cards: vec![CardLackey { name: CardName { id:"4d/323".to_string(),
+//                                                       name:"Green Mana Battery".to_string() },
+//                                      set: "4e".to_string() },],
+//        },
+//    }; 
+    let deck = Deck {
+        version: "0.8".into(),
+        // meta: Meta { game: Game {name:"erkki"}}.into(),
+        meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}}.into(),
+
+        //meta: Meta { game: std::borrow::Cow::Borrowed("erkki")}.into(),
+
+        //meta: Game { name: "mtg".into() }.into(),
+    }; 
+
+    // let mut buffer = Vec::new();
+    println!("{:?}", deck.to_string());
+
 }
 
 //pub fn load_list_of_cards( )-> Result<(), Box<dyn Error>>  {
@@ -73,10 +131,14 @@ pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     Ok(buffer)
 }
 
-pub fn load_cards() -> Vec<Card> {
-    let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
-    Vec::<Card>::new()
+pub fn to_lackey(cards: &Vec<CardInput>) {
+
 }
+
+// pub fn load_cards() -> Vec<Card> {
+//     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
+//     Vec::<Card>::new()
+// }
 
 pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
