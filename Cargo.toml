@@ -11,3 +11,4 @@ dioxus-desktop = "0.3.0"
 serde = "1.0.152"
 serde-xml-rs = "0.6.0"
 strong-xml = "0.6"
+rand = { version = "0.8.5" }
