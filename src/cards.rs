@@ -61,9 +61,35 @@ pub struct Game<'a> {
 pub struct SuperZone<'a> {
     #[xml(attr = "name")]
     name: Cow<'a, str>,
-    // #[serde(rename = "$value")]
-    // cards: Vec<CardLackey>,
+    #[xml(child = "cards")]
+    cards: Vec<Card<'a>>, 
 }
+
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "card")]
+struct Card<'a> {
+    #[xml(child = "name")]
+    name: Name<'a>,
+    #[xml(child = "set")]
+    set: Set<'a>,
+}
+
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "name")]
+struct Name<'a> {
+    #[xml(attr = "id")]
+    id: Cow<'a, str>,
+    #[xml(text)]
+    name: Cow<'a, str>,
+}
+
+#[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
+#[xml(tag = "set")]
+struct Set<'a> {
+    #[xml(text)]
+    name: Cow<'a, str>,
+}
+
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CardLackey {
@@ -93,7 +119,19 @@ pub fn to_lackey_test() {
         version: "0.8".into(),
         // meta: Meta { game: Game {name:"erkki"}}.into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}}.into(),
-        super_zone: SuperZone { name: std::borrow::Cow::Borrowed("Deck")}.into(),
+        super_zone: SuperZone {
+            name: std::borrow::Cow::Borrowed("Deck"),
+            cards: vec![
+                Card {name: Name {id: "id heh".into(),
+                                  name: "Fireballi".into()},
+                      set: Set { name: "4e".into()},
+                },
+                Card {name: Name {id: "id 123".into(),
+                                  name: "Timber woloffi".into()},
+                      set: Set { name: "3e".into()},
+                }
+            ],
+        }.into(),
 
         //meta: Meta { game: std::borrow::Cow::Borrowed("erkki")}.into(),
 
