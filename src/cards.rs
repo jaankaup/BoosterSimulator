@@ -120,6 +120,7 @@ pub struct CardName {
  
 pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>) -> Vec<Card<'a>> {
 
+    println!("Buy boosters.");
     let mut result = Vec::<Card>::new();
 
     for booster in boosters {
