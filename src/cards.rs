@@ -194,11 +194,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()) as usize; 
 
-            if commons[ind].card_type.eq(&swamp) ||
-               commons[ind].card_type.eq(&plains) ||
-               commons[ind].card_type.eq(&forest) ||
-               commons[ind].card_type.eq(&island) ||
-               commons[ind].card_type.eq(&mountain) { continue; } 
+            if commons[ind].name.eq(&swamp) ||
+               commons[ind].name.eq(&plains) ||
+               commons[ind].name.eq(&forest) ||
+               commons[ind].name.eq(&island) ||
+               commons[ind].name.eq(&mountain) { continue; } 
 
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),
