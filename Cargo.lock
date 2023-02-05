@@ -150,7 +150,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "boosterSimulator"
+name = "booster_simulator"
 version = "0.1.0"
 dependencies = [
  "dioxus",

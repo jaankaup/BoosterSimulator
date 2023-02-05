@@ -2,7 +2,7 @@ use rand::prelude::*;
 use std::borrow::Cow;
 use strong_xml::{XmlRead, XmlWrite};
 use serde::{Serialize, Deserialize};
-use serde_xml_rs::{from_str, to_string};
+use serde_xml_rs::{from_str}; //, to_string};
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -42,7 +42,6 @@ pub struct CardInput {
 pub struct Deck<'a> {
     #[xml(attr = "version")]
     version: Cow<'a, str>,
-    //#[xml(text)]
     #[xml(child = "meta")]
     meta: Meta<'a>,
     #[xml(child = "superzone")]
@@ -74,6 +73,7 @@ pub struct SuperZone<'a> {
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
 #[xml(tag = "card")]
+#[allow(unused_must_use)]
 pub struct Card<'a> {
     #[xml(child = "name")]
     name: Name<'a>,
@@ -148,14 +148,14 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let uncommon_count = booster.amount * 3; 
         let common_count = booster.amount * 11; 
 
-        println!("{:?}", rares.len()); 
-        println!("{:?}", uncommons.len()); 
-        println!("{:?}", commons.len()); 
+        // println!("{:?}", rares.len()); 
+        // println!("{:?}", uncommons.len()); 
+        // println!("{:?}", commons.len()); 
 
         let mut rng = thread_rng();
 
         // Get Rare cards.
-        for i in 0..rare_count {
+        for _ in 0..rare_count {
             let ind = rng.gen_range(0..rares.len()) as usize; 
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
@@ -163,7 +163,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: rares[ind].set.clone().into()},
                 });
         } 
-        for i in 0..uncommon_count {
+        for _ in 0..uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()) as usize; 
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
@@ -171,7 +171,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: uncommons[ind].set.clone().into()},
                 });
         } 
-        for i in 0..common_count {
+        for _ in 0..common_count {
             let ind = rng.gen_range(0..commons.len()) as usize; 
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),
@@ -200,7 +200,8 @@ pub fn to_lackey(cards: &Vec<Card>) -> String {
         // meta: Meta { game: Game {name:"erkki"}}.into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}}.into(),
         super_zone: SuperZone {
-            name: std::borrow::Cow::Borrowed("Deck"),
+            //name: std::borrow::Cow::Borrowed("Deck"),
+            name: std::borrow::Cow::Borrowed("Sideboard"),
             cards: cards.clone(),
             // cards: vec![
             //     Card {name: Name {id: "id heh".into(),
@@ -265,6 +266,9 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
     }
     // println!("{:?}", set_hash_map);
     // println!("The length == {:?}", set_hash_map.keys().len());
+    for key in set_hash_map.keys() {
+        println!("{:?}", key);
+    }
 
     set_hash_map
 }

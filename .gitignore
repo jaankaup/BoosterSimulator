@@ -1,6 +1,7 @@
 /target
 sets
-ListOfCardDataFiles.txt
+ListOfCardDataFiles*.txt
 formats.txt
+output.txt
 *.swp
 *.swo
