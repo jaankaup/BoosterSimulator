@@ -64,33 +64,21 @@ fn main() {
     // home
     // fe
 
-    let mut f = File::open("booster_config.toml").unwrap();
+    let mut f = File::open("booster_config.toml").expect("Couldn't find 'booster_config_toml'.");
     let mut buffer = String::new();
     f.read_to_string(&mut buffer).unwrap();
 
     let booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
 
-    // let boosters = vec![
-    //         Booster { set: "alpha".to_string(), amount: 1, },
-    //         Booster { set: "beta".to_string(), amount: 1, },
-    //         Booster { set: "mirage".to_string(), amount: 1, },
-    //         Booster { set: "mirage".to_string(), amount: 1, },
-    //         Booster { set: "visions".to_string(), amount: 1, },
-    //         Booster { set: "ia".to_string(), amount: 1, },
-    //         Booster { set: "5e".to_string(), amount: 1, },
-    //         Booster { set: "homelands".to_string(), amount: 1, },
-    //         Booster { set: "an".to_string(), amount: 1, },
-    //         Booster { set: "dark".to_string(), amount: 1, },
-    //         Booster { set: "unlimited".to_string(), amount: 1, },
-    //         Booster { set: "legends".to_string(), amount: 1, },
-    // ];
-
     let mut sets = load_mtg();
+    println!("Creating boosters.");
     let cards = buy_boosters(&booster_conf.boosters, &mut sets);
     let lackey_filu = to_lackey(&cards);
     // let app_state = AppState { sets: &sets, boosters: &boosters };
 
+    println!("Saving deck to {:?}.", booster_conf.file_name);
     fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file");
+    println!("Done!");
     //let to_toml = TomlConfig { file_name: "mun_pakka.dek".to_string(), boosters: boosters, };
 
     // fs::write("booster_config.toml", toml::to_string(&to_toml).unwrap()).expect("Unable to write file");
