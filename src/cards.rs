@@ -132,6 +132,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let mut uncommons = Vec::<CardInput>::new(); 
         let mut commons = Vec::<CardInput>::new(); 
 
+        println!("Set is {:?}", booster.set);
         // Filter set using rarity.
         let the_set = sets.get(&booster.set).unwrap();
 
