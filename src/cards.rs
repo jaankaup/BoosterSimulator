@@ -261,7 +261,7 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
         let file_loc = String::from("sets/") + &list.file;
         println!("{:?}", file_loc);
         //if let Ok(lines) = read_lines("./premodern-expansions.txt") {
-        if let Ok(lines) = read_lines(list.file) {
+        if let Ok(lines) = read_lines(file_loc) {
 
             let mut counter = 0;
         	for line in lines {
