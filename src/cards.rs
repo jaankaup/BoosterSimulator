@@ -10,6 +10,13 @@ use std::io::prelude::*;
 use std::error::Error;
 use std::collections::HashMap;
 
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct TomlConfig {
+    pub file_name: String,
+    pub boosters: Vec<Booster>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct Booster {
     pub set: String,
     pub amount: u32, 
@@ -250,7 +257,7 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
         //if let Ok(lines) = read_lines("./premodern-expansions.txt") {
         if let Ok(lines) = read_lines(list.file) {
-        	// Consumes the iterator, returns an (Optional) String
+
             let mut counter = 0;
         	for line in lines {
                     if let Ok(ip) = line {
@@ -266,16 +273,16 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
     }
     // println!("{:?}", set_hash_map);
     // println!("The length == {:?}", set_hash_map.keys().len());
-    for key in set_hash_map.keys() {
-        println!("{:?}", key);
-    }
+    // for key in set_hash_map.keys() {
+    //     println!("{:?}", key);
+    // }
 
     set_hash_map
 }
 
 // The output is wrapped in a Result to allow matching on errors
 // Returns an Iterator to the Reader of the lines of the file.
-fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+pub fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
 where P: AsRef<Path>, {
     let file = File::open(filename)?;
     Ok(io::BufReader::new(file).lines())
