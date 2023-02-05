@@ -13,3 +13,6 @@ serde-xml-rs = "0.6.0"
 strong-xml = "0.6"
 rand = { version = "0.8.5" }
 toml = "0.7.1"
+
+[profile.release]
+opt-level = 3
