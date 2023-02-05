@@ -45,10 +45,6 @@ set = "ia"
 amount = 1
 
 [[boosters]]
-set = "chk"
-amount = 1
-
-[[boosters]]
 set = "homelands"
 amount = 1
 

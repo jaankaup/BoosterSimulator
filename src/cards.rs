@@ -40,6 +40,7 @@ pub struct CardInput {
     set: String,
     imagefile: String,
     rarity: String,
+    card_type: String,
 }
 
 // LACKEY output formats.
@@ -134,13 +135,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let mut commons = Vec::<CardInput>::new(); 
 
         println!("Set is {:?}", booster.set);
+
         // Filter set using rarity.
         let the_set = sets.get(&booster.set).unwrap();
 
-        //             .unwrap()
-        //             .into_iter()
-        //             .filter(|x| x.rarity.eq(&rare))
-        //             .collect_into(&mut rares);
         for i in the_set.iter() {
             if i.rarity.eq(&rare) {
                rares.push(i.clone());
@@ -156,38 +154,86 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let rare_count = booster.amount; 
         let uncommon_count = booster.amount * 3; 
         let common_count = booster.amount * 11; 
-
-        // println!("{:?}", rares.len()); 
-        // println!("{:?}", uncommons.len()); 
-        // println!("{:?}", commons.len()); 
+        let mut rare_counter = 0;
+        let mut uncommon_counter = 0;
+        let mut common_counter = 0;
 
         let mut rng = thread_rng();
 
-        // Get Rare cards.
-        for _ in 0..rare_count {
+        while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()) as usize; 
+
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
                                    name: rares[ind].name.clone().into()},
                        set: Set { name: rares[ind].set.clone().into()},
                 });
-        } 
-        for _ in 0..uncommon_count {
+
+            rare_counter = rare_counter + 1;
+        }
+
+        while uncommon_counter < uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()) as usize; 
+
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
                                    name: uncommons[ind].name.clone().into()},
                        set: Set { name: uncommons[ind].set.clone().into()},
                 });
-        } 
-        for _ in 0..common_count {
+
+            uncommon_counter = uncommon_counter + 1;
+        }
+
+        
+        let swamp = String::from("Swamp");
+        let plains = String::from("Plains");
+        let forest = String::from("Forest");
+        let island = String::from("Island");
+        let mountain = String::from("Mountain");
+
+        while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()) as usize; 
+
+            if commons[ind].card_type.eq(&swamp) ||
+               commons[ind].card_type.eq(&plains) ||
+               commons[ind].card_type.eq(&forest) ||
+               commons[ind].card_type.eq(&island) ||
+               commons[ind].card_type.eq(&mountain) { continue; } 
+
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),
                                    name: commons[ind].name.clone().into()},
                        set: Set { name: commons[ind].set.clone().into()},
                 });
-        } 
+
+            common_counter = common_counter + 1;
+        }
+
+        // Get Rare cards.
+        // jfor _ in 0..rare_count {
+        // j    let ind = rng.gen_range(0..rares.len()) as usize; 
+        // j    result.push(
+        // j        Card { name: Name {id: rares[ind].imagefile.clone().into(),
+        // j                           name: rares[ind].name.clone().into()},
+        // j               set: Set { name: rares[ind].set.clone().into()},
+        // j        });
+        // j} 
+        // for _ in 0..uncommon_count {
+        //     let ind = rng.gen_range(0..uncommons.len()) as usize; 
+        //     result.push(
+        //         Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
+        //                            name: uncommons[ind].name.clone().into()},
+        //                set: Set { name: uncommons[ind].set.clone().into()},
+        //         });
+        // } 
+        // for _ in 0..common_count {
+        //     let ind = rng.gen_range(0..commons.len()) as usize; 
+        //     result.push(
+        //         Card { name: Name {id: commons[ind].imagefile.clone().into(),
+        //                            name: commons[ind].name.clone().into()},
+        //                set: Set { name: commons[ind].set.clone().into()},
+        //         });
+        // } 
 
     }
     result
@@ -212,28 +258,12 @@ pub fn to_lackey(cards: &Vec<Card>) -> String {
             //name: std::borrow::Cow::Borrowed("Deck"),
             name: std::borrow::Cow::Borrowed("Sideboard"),
             cards: cards.clone(),
-            // cards: vec![
-            //     Card {name: Name {id: "id heh".into(),
-            //                       name: "Fireballi".into()},
-            //           set: Set { name: "4e".into()},
-            //     },
-            //     Card {name: Name {id: "id 123".into(),
-            //                       name: "Timber woloffi".into()},
-            //           set: Set { name: "3e".into()},
-            //     }
-            // ],
         }.into(),
-
-        //meta: Meta { game: std::borrow::Cow::Borrowed("erkki")}.into(),
-
-        //meta: Game { name: "mtg".into() }.into(),
     }; 
     deck.to_string().unwrap()
-    // let mut buffer = Vec::new();
 
 }
 
-//pub fn load_list_of_cards( )-> Result<(), Box<dyn Error>>  {
 pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     println!("Loading list of cards.");
     let mut f = File::open("ListOfCardDataFiles.txt")?;
@@ -242,16 +272,9 @@ pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     Ok(buffer)
 }
 
-// pub fn load_cards() -> Vec<Card> {
-//     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
-//     Vec::<Card>::new()
-// }
-
 pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
-
-    // let mut cards = Vec::<CardInput>::new();
 
     // Create hashmap for sets.
     let mut set_hash_map = HashMap::<String, Vec<CardInput>>::new(); 
@@ -259,8 +282,7 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
     for list in card_lists.files_to_include {
 
         let file_loc = String::from("sets/") + &list.file;
-        println!("{:?}", file_loc);
-        //if let Ok(lines) = read_lines("./premodern-expansions.txt") {
+        // println!("{:?}", file_loc);
         if let Ok(lines) = read_lines(file_loc) {
 
             let mut counter = 0;
@@ -271,16 +293,20 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
                         let ll = ip.split("\t").collect::<Vec<&str>>();
                         if ll.len() < 2 { continue; }
 
-                        set_hash_map.entry(ll[1].to_string()).or_default().push(CardInput { name: ll[0].to_string(), set: ll[1].to_string(), imagefile: ll[2].to_string(), rarity: ll[12].to_string() });
+                        set_hash_map.entry(ll[1]
+                        .to_string())
+                        .or_default()
+                        .push(CardInput {
+                                name: ll[0].to_string(),
+                                set: ll[1].to_string(),
+                                imagefile: ll[2].to_string(),
+                                rarity: ll[12].to_string(),
+                                card_type: ll[7].to_string()
+                        });
                     }
         	}
         }
     }
-    // println!("{:?}", set_hash_map);
-    // println!("The length == {:?}", set_hash_map.keys().len());
-    // for key in set_hash_map.keys() {
-    //     println!("{:?}", key);
-    // }
 
     set_hash_map
 }
