@@ -235,6 +235,7 @@ pub fn to_lackey(cards: &Vec<Card>) -> String {
 
 //pub fn load_list_of_cards( )-> Result<(), Box<dyn Error>>  {
 pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
+    println!("Loading list of cards.");
     let mut f = File::open("ListOfCardDataFiles.txt")?;
     let mut buffer = String::new();
     f.read_to_string(&mut buffer)?;
@@ -257,6 +258,8 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
     for list in card_lists.files_to_include {
 
+        let file_loc = String::from("sets/") + &list.file;
+        println!("{:?}", file_loc);
         //if let Ok(lines) = read_lines("./premodern-expansions.txt") {
         if let Ok(lines) = read_lines(list.file) {
 
