@@ -1,51 +1,58 @@
+use dioxus_desktop::Config;
 use std::io::Read;
 use std::fs::File;
-use toml::*;
+// use toml::*;
 use std::collections::HashMap;
 use booster_simulator::cards::*;
 use dioxus::prelude::*;
 use std::fs;
+use booster_simulator::booster_list::*;
 
-#[derive(Props)]
-struct AppStateProps<'a> {
-    sets: &'a HashMap<String, Vec<CardInput>>,
-    boosters: &'a Vec<Booster>,
-    //initialized: bool,
+// #[derive(Props)]
+// struct AppStateProps<'a> {
+//     sets: &'a HashMap<String, Vec<CardInput>>,
+//     boosters: &'a Vec<Booster>,
+// }
+
+#[derive(PartialEq, Props)]
+struct AppStateProps {
+    sets: HashMap<String, Vec<CardInput>>,
+    boosters: Vec<Booster>,
 }
 
-fn AppState<'a>(cx: Scope<'a, AppStateProps<'a>>) -> Element {
-    let mut sets = load_mtg();
-    let boosters = vec![
-            Booster { set: "alpha".to_string(), amount: 5, },
-            Booster { set: "mirage".to_string(), amount: 5, },
-            Booster { set: "mirage".to_string(), amount: 5, },
-            Booster { set: "visions".to_string(), amount: 5, },
-            Booster { set: "ia".to_string(), amount: 10, },
-            Booster { set: "5e".to_string(), amount: 10, },
-            Booster { set: "homelands".to_string(), amount: 5, },
-    ];
-    let cards =  buy_boosters(&boosters, &mut sets);
-    let lackey_filu = to_lackey(&cards);
-    let mut app_state = AppStateProps { sets: &sets, boosters: &boosters };
-
-    let mut count = use_state(&cx, || 0);
-
-    // cx.render(rsx!(
-    //     ul {
-    //         booster_list
-    //     }
-    // ))
-
-    cx.render(rsx!(
-        div {
-            p {
-                h1 { "High-Five counter: {count}" }
-                button { onclick: move |_| count += 1, "Up high!" }
-                button { onclick: move |_| count -= 1, "Down low!" }
-            }
-        }
-    ))
-}
+// fn AppState<'a>(cx: Scope<'a, AppStateProps<'a>>) -> Element {
+//     let mut sets = load_mtg();
+//     let boosters = vec![
+//             Booster { set: "alpha".to_string(), amount: 5, },
+//             Booster { set: "mirage".to_string(), amount: 5, },
+//             Booster { set: "mirage".to_string(), amount: 5, },
+//             Booster { set: "visions".to_string(), amount: 5, },
+//             Booster { set: "ia".to_string(), amount: 10, },
+//             Booster { set: "5e".to_string(), amount: 10, },
+//             Booster { set: "homelands".to_string(), amount: 5, },
+//     ];
+//     let cards =  buy_boosters(&boosters, &mut sets);
+//     let lackey_filu = to_lackey(&cards);
+//     let mut app_state = AppStateProps { sets: &sets, boosters: &boosters };
+// 
+//     let mut count = use_state(&cx, || 0);
+// 
+//     // cx.render(rsx!(
+//     //     ul {
+//     //         booster_list
+//     //     }
+//     // ))
+// 
+//     cx.render(rsx!(
+//         div {
+//             p {
+//                 h1 { "High-Five counter: {count}" }
+//                 button { onclick: move |_| count += 1, "Up high!" }
+//                 button { onclick: move |_| count -= 1, "Down low!" }
+//             }
+//         }
+//     ))
+// }
 
 fn main() {
 //    pub struct Listofcarddatafiles {
@@ -64,11 +71,12 @@ fn main() {
     // home
     // fe
 
+
     let mut f = File::open("booster_config.toml").expect("Couldn't find 'booster_config_toml'.");
     let mut buffer = String::new();
     f.read_to_string(&mut buffer).unwrap();
 
-    let booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
+    let mut booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
 
     let mut sets = load_mtg();
     println!("Creating boosters.");
@@ -77,17 +85,39 @@ fn main() {
     // let app_state = AppState { sets: &sets, boosters: &boosters };
 
     println!("Saving deck to {:?}.", booster_conf.file_name);
-    fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file");
+    fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file.");
     println!("Done!");
     //let to_toml = TomlConfig { file_name: "mun_pakka.dek".to_string(), boosters: boosters, };
 
     // fs::write("booster_config.toml", toml::to_string(&to_toml).unwrap()).expect("Unable to write file");
-    // dioxus_desktop::launch(app);
+    let app_props = AppStateProps { 
+        sets: sets,
+        boosters: booster_conf.boosters,
+    };
+    dioxus_desktop::launch_with_props(BoosterApp, app_props, Config::new());
+}
+
+//fn BoosterApp<'a>(cx: Scope<'a, AppStateProps>) -> Element<'a> {
+fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
+    cx.render(rsx! {
+                 div {
+                     ul {
+                        cx.props.boosters.iter().map(|b|
+                           rsx! {
+                              li {
+                                  div {
+                                      booster_rsx { booster: b.clone() }
+                                  }
+                              }
+                           })
+                     }
+                 }
+    })
 }
 
 
 fn app(cx: Scope) -> Element {
-    let mut initialized = use_state(&cx, || true);
+    let mut booster = use_state(&cx, || Booster { set: "erkin setti".to_string(), amount: 12, });
     // let boosters = vec![
     //         Booster { set: "alpha".to_string(), amount: 0, },
     //         Booster { set: "mirage".to_string(), amount: 0, },
@@ -120,6 +150,11 @@ fn app(cx: Scope) -> Element {
                 h1 { "High-Five counter: {count}" }
                 button { onclick: move |_| count += 1, "Up high!" }
                 button { onclick: move |_| count -= 1, "Down low!" }
+                div {
+                    booster_rsx {
+                       booster: Booster {set: "eki".to_string(), amount: 123, }
+                    }
+                }
             }
         }
     ))

@@ -16,7 +16,7 @@ pub struct TomlConfig {
     pub boosters: Vec<Booster>,
 }
 
-#[derive(Debug, Serialize, Deserialize, PartialEq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct Booster {
     pub set: String,
     pub amount: u32, 
