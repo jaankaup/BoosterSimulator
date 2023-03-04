@@ -1,3 +1,4 @@
+use std::rc::Rc;
 use dioxus_desktop::Config;
 use std::io::Read;
 use std::fs::File;
@@ -14,63 +15,7 @@ use booster_simulator::booster_list::*;
 //     boosters: &'a Vec<Booster>,
 // }
 
-#[derive(PartialEq, Props)]
-struct AppStateProps {
-    sets: HashMap<String, Vec<CardInput>>,
-    boosters: Vec<Booster>,
-}
-
-// fn AppState<'a>(cx: Scope<'a, AppStateProps<'a>>) -> Element {
-//     let mut sets = load_mtg();
-//     let boosters = vec![
-//             Booster { set: "alpha".to_string(), amount: 5, },
-//             Booster { set: "mirage".to_string(), amount: 5, },
-//             Booster { set: "mirage".to_string(), amount: 5, },
-//             Booster { set: "visions".to_string(), amount: 5, },
-//             Booster { set: "ia".to_string(), amount: 10, },
-//             Booster { set: "5e".to_string(), amount: 10, },
-//             Booster { set: "homelands".to_string(), amount: 5, },
-//     ];
-//     let cards =  buy_boosters(&boosters, &mut sets);
-//     let lackey_filu = to_lackey(&cards);
-//     let mut app_state = AppStateProps { sets: &sets, boosters: &boosters };
-// 
-//     let mut count = use_state(&cx, || 0);
-// 
-//     // cx.render(rsx!(
-//     //     ul {
-//     //         booster_list
-//     //     }
-//     // ))
-// 
-//     cx.render(rsx!(
-//         div {
-//             p {
-//                 h1 { "High-Five counter: {count}" }
-//                 button { onclick: move |_| count += 1, "Up high!" }
-//                 button { onclick: move |_| count -= 1, "Down low!" }
-//             }
-//         }
-//     ))
-// }
-
 fn main() {
-//    pub struct Listofcarddatafiles {
-//    pub struct Filetoinclude  {
-    //let card = Point {x:1, y:2}; 
-    // let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();
-    // to_lackey_test();
-    //println!("{:?}", card_lists);
-    //println!("{:?}", load_list_of_cards().unwrap());
-    //load_mtg();
-
-
-    // visions
-    // mirage
-    // ia
-    // home
-    // fe
-
 
     let mut f = File::open("booster_config.toml").expect("Couldn't find 'booster_config_toml'.");
     let mut buffer = String::new();
@@ -87,81 +32,58 @@ fn main() {
     println!("Saving deck to {:?}.", booster_conf.file_name);
     fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file.");
     println!("Done!");
+
+
     //let to_toml = TomlConfig { file_name: "mun_pakka.dek".to_string(), boosters: boosters, };
 
     // fs::write("booster_config.toml", toml::to_string(&to_toml).unwrap()).expect("Unable to write file");
-    let app_props = AppStateProps { 
-        sets: sets,
-        boosters: booster_conf.boosters,
-    };
-    dioxus_desktop::launch_with_props(BoosterApp, app_props, Config::new());
+    // let app_props = AppStateProps { 
+    //     sets: sets,
+    //     boosters: booster_conf.boosters,
+    // };
+    // dioxus_desktop::launch_with_props(BoosterApp, app_props, Config::new());
 }
 
-//fn BoosterApp<'a>(cx: Scope<'a, AppStateProps>) -> Element<'a> {
-fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
-    cx.render(rsx! {
-                 div {
-                     ul {
-                        cx.props.boosters.iter().map(|b|
-                           rsx! {
-                              li {
-                                  div {
-                                      booster_rsx { booster: b.clone() }
-                                  }
-                              }
-                           })
-                     }
-                 }
-    })
-}
-
-
-fn app(cx: Scope) -> Element {
-    let mut booster = use_state(&cx, || Booster { set: "erkin setti".to_string(), amount: 12, });
-    // let boosters = vec![
-    //         Booster { set: "alpha".to_string(), amount: 0, },
-    //         Booster { set: "mirage".to_string(), amount: 0, },
-    //         Booster { set: "mirage".to_string(), amount: 0, },
-    //         Booster { set: "visions".to_string(), amount: 0, },
-    //         Booster { set: "ia".to_string(), amount: 0, },
-    //         Booster { set: "5e".to_string(), amount: 0, },
-    //         Booster { set: "homelands".to_string(), amount: 0, },
-    // ];
-    // let booster_list = boosters.iter().map(|booster| rsx!(
-    //     li {
-    //         div {
-    //             p { "{booster.set}" }
-    //             p { "{booster.amount}"}
-    //         }
-    //     }
-    // ));
-
-    let mut count = use_state(&cx, || 0);
-
-    // cx.render(rsx!(
-    //     ul {
-    //         booster_list
-    //     }
-    // ))
-
-    cx.render(rsx!(
-        div {
-            p {
-                h1 { "High-Five counter: {count}" }
-                button { onclick: move |_| count += 1, "Up high!" }
-                button { onclick: move |_| count -= 1, "Down low!" }
-                div {
-                    booster_rsx {
-                       booster: Booster {set: "eki".to_string(), amount: 123, }
-                    }
-                }
-            }
-        }
-    ))
-}
-
-// fn app(cx: Scope) -> Element {
-//     cx.render(rsx! (
-//         div { "Hello, world!" }
-//     ))
+// #[inline_props]
+// fn Boo(cx: Scope, booster: Booster) -> Element {
+//     let set = use_ref(&cx, || booster.set.clone()); 
+//     let amount = use_ref(&cx, || booster.amount); 
+//     cx.render(rsx!{
+//         h1 { "Erki" }
+//     })
+// }
+// 
+// //fn BoosterApp<'a>(cx: Scope<'a, AppStateProps>) -> Element<'a> {
+// fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
+//     //let sets = use_ref(&cx, || cx.props.sets.clone());
+//     //let boosters = use_ref(&cx, || cx.props.boosters.iter().map(|b| 1).collect::<Vec<_>>());
+//     let boosters = use_ref(&cx, || cx.props.boosters.clone());
+//     //let boosters = use_ref(&cx, || cx.props.boosters.iter().map(|b| use_ref(&cx, || b.clone())).collect::<Vec<_>>());
+//     //let boosters = use_state(&cx, || cx.props.boosters.iter().map(|b| use_ref(&cx, || b.clone())).collect::<Vec<_>>());
+//     //let boosters = use_ref(&cx, || cx.props.boosters.iter().map(|b| Rc::<Booster>::new(b.clone())).collect::<Vec<_>>());
+//     //let boosters = use_ref(&cx, || cx.props.boosters.clone());
+//     //let boosters = use_ref(&cx, || cx.props.boosters.clone());
+// 
+//     cx.render(rsx! {
+//                  div {
+//                      ul {
+//                         boosters.read().iter().map(|b|
+//                            rsx! {
+//                               li {
+//                                   div {
+//                                       //booster_rsx(cx, b)
+//                                       booster_rsx { cx, booster: b.clone() }
+//                                       //button { onclick: move |_| { let mut bb = b.clone(); *Rc::make_mut(&mut bb) = Booster { set: "erkki".to_string(), amount: 5, }; } } // cx.needs_update(); },  "+" }
+//                                       //button { onclick: move |_| { *Rc::get_mut(&mut b).unwrap() = Booster { set: "erkki".to_string(), amount: 5, }; } } // cx.needs_update(); },  "+" }
+//                                       //button { onclick: move |_| { b.make_mut().push(Booster { set: "erkki".to_string(), amount: 5, }); } } // cx.needs_update(); },  "+" }
+//                                       //"{b.set} :: {b.amount}"
+//                                       //Boo(b.clone())
+//                                       "Erkki"
+//                                       //button { onclick: move |_| { let x = use_ref(&cx, || b.clone(); }, "Oolrait" } // cx.needs_update(); },  "+" }
+//                                   }
+//                               }
+//                            })
+//                      }
+//                  }
+//     })
 // }
