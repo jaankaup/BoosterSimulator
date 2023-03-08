@@ -7,13 +7,50 @@ use std::collections::HashMap;
 use booster_simulator::cards::*;
 use dioxus::prelude::*;
 use std::fs;
-use booster_simulator::booster_list::*;
+// use booster_simulator::booster_list::*;
+use booster_simulator::components::BoosterComponent;
 
 // #[derive(Props)]
 // struct AppStateProps<'a> {
 //     sets: &'a HashMap<String, Vec<CardInput>>,
 //     boosters: &'a Vec<Booster>,
 // }
+
+fn App(cx: Scope) -> Element {
+    cx.render(rsx!(
+        BoosterComponent { booster: Booster { set: "4e".to_string(), amount: 0, } }
+        BoosterComponent { booster: Booster { set: "3e".to_string(), amount: 0, } }
+        BoosterComponent { booster: Booster { set: "ice".to_string(), amount: 0, } }
+        BoosterComponent { booster: Booster { set: "homelands".to_string(), amount: 0, } }
+        BoosterComponent { booster: Booster { set: "an".to_string(), amount: 0, } }
+        BoosterComponent { booster: Booster { set: "pah".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
+    ))
+}
+
+//++ fn App(cx: Scope) -> Element {
+//++     let container_style = r#"
+//++         color: red;
+//++         position: relative;
+//++         width: fit-content;
+//++        "#;
+//++     let name = use_state(cx, || "mydeck.dec".to_string());
+//++ 
+//++     cx.render(rsx! {
+//++         input {
+//++             style: "{container_style}",
+//++             // we tell the component what to render
+//++             value: "{name}",
+//++             // and what to do when the value changes
+//++             oninput: move |evt| name.set(evt.value.clone()),
+//++         }
+//++     })
+//++ }
 
 fn main() {
 
@@ -33,6 +70,7 @@ fn main() {
     fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file.");
     println!("Done!");
 
+    dioxus_desktop::launch(App);
 
     //let to_toml = TomlConfig { file_name: "mun_pakka.dek".to_string(), boosters: boosters, };
 
