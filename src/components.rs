@@ -3,6 +3,7 @@ use dioxus::prelude::*;
 use crate::cards::Booster;
 
 pub struct Points(pub f32);
+pub struct SharedBoosters(pub Vec<Booster>);
 
 // pub struct Boosters(Vec<Booster>);
 
@@ -13,49 +14,45 @@ pub struct Points(pub f32);
 // }
 
 //pub fn BoosterComponent(cx: Scope<Booster>, booster: UseRef<Booster>) -> Element {
-#[inline_props]
 //pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster) -> Element<'a> {
-pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
+// pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -> Element {
+#[inline_props]
+pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -> Element {
     let mut count = use_state(cx, || 0);
     let points_left = use_shared_state::<Points>(cx).unwrap();
-
-    // cx.render(rsx! {
-    //     input {
-    //         // we tell the component what to render
-    //         value: "{name}",
-    //         // and what to do when the value changes
-    //         oninput: move |evt| name.set(evt.value.clone()),
-    //     }
-    // })
-    // let points_minus_val = minus_val * booster_cost + (*points_left.read()).0;
-    // let points_plus_val = (*points_left.read()).0 + minus_val;
-
+    let shared_booster = use_shared_state::<SharedBoosters>(cx).unwrap();
 
     let name_style = r#"
+        padding-left: 10px;
         width: 400px;
     "#;
     let price_style = r#"
+        margin-right: 10px;
         width: 50px;
         color: white;
         background-color: rgb(125,75,15);
     "#;
     let plus_style = r#"
+        margin-right: 10px;
         width: 50px;
         color: white;
         background-color: rgb(225,15,15);
     "#;
     let minus_style = r#"
+        margin-right: 10px;
         width: 50px;
         color: white;
         vertical-align: middle;
         background-color: rgb(0,15,225);
     "#;
     let count_style = r#"
+        margin-right: 10px;
         width: 50px;
         color: black;
         background-color: rgb(100,255,100);
     "#;
     let container_style = r#"
+        margin: 5px;
         display: inline-flex;
         color: red;
         background-color: rgb(0,200, 255);
@@ -66,9 +63,11 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
         width: 475px;
        "#;
 
+    let amount = ((*shared_booster.read().0)[*index]).amount;
 
     // How much to decrease booster count when pressing (-).
-    let minus_val = if *count.get() == 0 { 0 } else { 1 };
+    let minus_val = if amount == 0 { 0 } else { 1 };
+    //let minus_val = if *count.get() == 0 { 0 } else { 1 };
 
     // How much to increase booster count whe pressing (+).
     let inc_booster = if (*points_left.read()).0 >= booster.price { 1 } else { 0 };
@@ -78,6 +77,7 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
 
     // The new points_left value if (-) pressed.
     let new_points_minus =  (*points_left.read()).0 + minus_val as f32 * booster.price; 
+
 
     cx.render(rsx!{
         p {
@@ -92,15 +92,18 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
             }
             button {
                 style: "{plus_style}",
-                onclick: move |_| { count += inc_booster; (*points_left.write()).0 = new_points_plus;  }, "+",
+                //onclick: move |_| { booster.amount = booster.amount + inc_booster; (*points_left.write()).0 = new_points_plus;  }, "+",
+                //onclick: move |_| { count += inc_booster; (*points_left.write()).0 = new_points_plus;  }, "+",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + inc_booster; (*points_left.write()).0 = new_points_plus; }, "+",
             },
             button {
                 style: "{minus_style}",
-                onclick: move |_| { count -= minus_val; (*points_left.write()).0 = new_points_minus; }, "-",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount - minus_val; (*points_left.write()).0 = new_points_minus; }, "-",
             },
             p {
                 style: "{count_style}",
-                "{count}"
+                //"{count}"
+                "{amount}"
             },
         }
     })
