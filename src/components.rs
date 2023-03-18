@@ -2,6 +2,8 @@ use std::cell::Cell;
 use dioxus::prelude::*;
 use crate::cards::Booster;
 
+// pub struct Boosters(Vec<Booster>);
+
 // #[derive(PartialEq, Props)]
 // pub struct BoosterProps {
 //     pub set: String,
@@ -10,6 +12,7 @@ use crate::cards::Booster;
 
 //pub fn BoosterComponent(cx: Scope<Booster>, booster: UseRef<Booster>) -> Element {
 #[inline_props]
+//pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster) -> Element<'a> {
 pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
     let mut count = use_state(cx, || 0);
     let minus_val = if *count.get() == 0 { 0 } else { 1 };
@@ -43,7 +46,7 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
         border: 1px solid red;
         width: 475px;
        "#;
-    cx.render(rsx!(
+    cx.render(rsx!{
         p {
             style: "{container_style}",
             p {
@@ -63,7 +66,7 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
                 "{count}"
             },
         }
-    ))
+    })
 }
 
 fn Yeah(cx: Scope) -> Element {

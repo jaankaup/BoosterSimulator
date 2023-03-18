@@ -1,3 +1,5 @@
+use booster_simulator::booster_list::AppStateProps;
+use crate::dioxus_elements::map;
 use std::rc::Rc;
 use dioxus_desktop::Config;
 use std::io::Read;
@@ -8,7 +10,10 @@ use booster_simulator::cards::*;
 use dioxus::prelude::*;
 use std::fs;
 // use booster_simulator::booster_list::*;
-use booster_simulator::components::BoosterComponent;
+use booster_simulator::components::{
+    //Boosters;
+    BoosterComponent,
+};
 
 // #[derive(Props)]
 // struct AppStateProps<'a> {
@@ -16,41 +21,28 @@ use booster_simulator::components::BoosterComponent;
 //     boosters: &'a Vec<Booster>,
 // }
 
-fn App(cx: Scope) -> Element {
-    cx.render(rsx!(
-        BoosterComponent { booster: Booster { set: "4e".to_string(), amount: 0, } }
-        BoosterComponent { booster: Booster { set: "3e".to_string(), amount: 0, } }
-        BoosterComponent { booster: Booster { set: "ice".to_string(), amount: 0, } }
-        BoosterComponent { booster: Booster { set: "homelands".to_string(), amount: 0, } }
-        BoosterComponent { booster: Booster { set: "an".to_string(), amount: 0, } }
-        BoosterComponent { booster: Booster { set: "pah".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-        // BoosterComponent { Booster { set: "4e".to_string(), amount: 0, } }
-    ))
-}
 
-//++ fn App(cx: Scope) -> Element {
-//++     let container_style = r#"
-//++         color: red;
-//++         position: relative;
-//++         width: fit-content;
-//++        "#;
-//++     let name = use_state(cx, || "mydeck.dec".to_string());
-//++ 
-//++     cx.render(rsx! {
-//++         input {
-//++             style: "{container_style}",
-//++             // we tell the component what to render
-//++             value: "{name}",
-//++             // and what to do when the value changes
-//++             oninput: move |evt| name.set(evt.value.clone()),
-//++         }
-//++     })
-//++ }
+// #[inline_props]
+// fn App(cx: Scope, boosters: Vec<Booster>) -> Element {
+// 
+//     let state = use_state(cx, || boosters);
+//     //let state = use_state(cx, || vec![Booster { set: "5e".to_string(), amount: 2, }, Booster { set: "6e".to_string(), amount: 1, }]);
+// 
+//     cx.render(rsx!(
+//                   state.iter().map(|b|
+//                       rsx!{BoosterComponent { booster: b.clone() }}
+//                   ))
+//     )
+// }
+
+fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
+    let boosters = use_state(&cx, || cx.props.boosters.clone());
+    cx.render(rsx!(
+                  boosters.iter().map(|b|
+                      rsx!{BoosterComponent { booster: b.clone() }}
+                  ))
+    )
+}
 
 fn main() {
 
@@ -61,7 +53,11 @@ fn main() {
     let mut booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
 
     let mut sets = load_mtg();
+    // for x in sets.keys() {
+    //     println!("JEEJEE {:?}", x);
+    // }
     println!("Creating boosters.");
+
     let cards = buy_boosters(&booster_conf.boosters, &mut sets);
     let lackey_filu = to_lackey(&cards);
     // let app_state = AppState { sets: &sets, boosters: &boosters };
@@ -70,7 +66,13 @@ fn main() {
     fs::write(booster_conf.file_name, lackey_filu).expect("Unable to write file.");
     println!("Done!");
 
-    dioxus_desktop::launch(App);
+    let app_props = AppStateProps { 
+        sets: sets,
+        boosters: booster_conf.boosters,
+    };
+    dioxus_desktop::launch_with_props(BoosterApp, app_props, Config::new());
+
+    //dioxus_desktop::launch_with_props(App, AppProps { boosters: booster_conf.boosters });
 
     //let to_toml = TomlConfig { file_name: "mun_pakka.dek".to_string(), boosters: boosters, };
 
