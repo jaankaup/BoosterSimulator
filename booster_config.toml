@@ -2,84 +2,110 @@ file_name = "decks/mun_pakka.dek"
 
 [[boosters]]
 set = "alpha"
-amount = 1
+amount = 20
+price = 1.5
 
 [[boosters]]
 set = "beta"
 amount = 1
+price = 1.5
 
 [[boosters]]
 set = "unlimited"
 amount = 1
+price = 1.5
 
 [[boosters]]
 set = "an"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "antiquities"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "revised"
 amount = 1
+price = 1.5
 
 [[boosters]]
 set = "legends"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "dark"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "fe"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "4e"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "ia"
 amount = 1
+price = 1.0
+
+[[boosters]]
+set = "chk"
+amount = 1
+price = 1.0
 
 [[boosters]]
 set = "homelands"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "alliances"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "mirage"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "visions"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "5e"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "portal"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "weatherlight"
 amount = 1
+price = 1.0
 
 [[boosters]]
 set = "tempest"
 amount = 1
+price = 1.25
 
 [[boosters]]
 set = "stronghold"
 amount = 1
+price = 1.25
 
 [[boosters]]
 set = "exodus"
 amount = 1
+price = 1.25

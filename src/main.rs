@@ -38,7 +38,7 @@ use booster_simulator::components::{
 
 
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
-    use_shared_state_provider(cx, || Points(45));
+    use_shared_state_provider(cx, || Points(45.0));
     let boosters = use_state(&cx, || cx.props.boosters.clone());
     let points_left = use_shared_state::<Points>(cx).unwrap();
     cx.render(rsx!(

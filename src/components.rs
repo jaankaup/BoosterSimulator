@@ -2,7 +2,7 @@ use std::cell::Cell;
 use dioxus::prelude::*;
 use crate::cards::Booster;
 
-pub struct Points(pub i32);
+pub struct Points(pub f32);
 
 // pub struct Boosters(Vec<Booster>);
 
@@ -25,6 +25,11 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
 
     let name_style = r#"
         width: 400px;
+    "#;
+    let price_style = r#"
+        width: 50px;
+        color: white;
+        background-color: rgb(125,75,15);
     "#;
     let plus_style = r#"
         width: 50px;
@@ -53,20 +58,19 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
         width: 475px;
        "#;
 
-    // Booster value.
-    let booster_value = 1;
 
     // How much to decrease booster count when pressing (-).
     let minus_val = if *count.get() == 0 { 0 } else { 1 };
 
     // How much to increase booster count whe pressing (+).
-    let inc_booster = if (*points_left.read()).0 >= booster_value { 1 } else { 0 };
+    let inc_booster = if (*points_left.read()).0 >= booster.price { 1 } else { 0 };
 
     // The new points_left value if (+) pressed.
-    let new_points_plus =  (*points_left.read()).0 - inc_booster * booster_value; 
+    let new_points_plus =  (*points_left.read()).0 - inc_booster as f32 * booster.price; 
 
     // The new points_left value if (-) pressed.
-    let new_points_minus =  (*points_left.read()).0 + minus_val * booster_value; 
+    let new_points_minus =  (*points_left.read()).0 + minus_val as f32 * booster.price; 
+    //let new_points_minus =  (*points_left.read()).0 + TryInto::<f32>::try_into(minus_val).unwrap() * booster.price; 
 
     cx.render(rsx!{
         p {
@@ -74,6 +78,10 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
             p {
                 style: "{name_style}",
                 "{booster.set}"
+            }
+            p {
+                style: "{price_style}",
+                "{booster.price}"
             }
             button {
                 style: "{plus_style}",

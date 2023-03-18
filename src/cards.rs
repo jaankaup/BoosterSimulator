@@ -20,6 +20,7 @@ pub struct TomlConfig {
 pub struct Booster {
     pub set: String,
     pub amount: u32, 
+    pub price: f32,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
