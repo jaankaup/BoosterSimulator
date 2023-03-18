@@ -40,9 +40,18 @@ use booster_simulator::components::{
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     use_shared_state_provider(cx, || Points(45.0));
     let boosters = use_state(&cx, || cx.props.boosters.clone());
+    let name = use_state(cx, || "pahapakka.dek".to_string());
     let points_left = use_shared_state::<Points>(cx).unwrap();
     cx.render(rsx!(
                   p { "Points left {(*points_left.read()).0}" }
+                  p {
+                      input {
+                          // we tell the component what to render
+                          value: "{name}",
+                          // and what to do when the value changes
+                          oninput: move |evt| name.set(evt.value.clone()),
+                      }
+                  }
                   boosters.iter().map(|b|
                       rsx!{BoosterComponent { booster: b.clone() }}
                   ))

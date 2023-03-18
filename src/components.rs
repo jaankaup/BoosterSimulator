@@ -19,6 +19,14 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
     let mut count = use_state(cx, || 0);
     let points_left = use_shared_state::<Points>(cx).unwrap();
 
+    // cx.render(rsx! {
+    //     input {
+    //         // we tell the component what to render
+    //         value: "{name}",
+    //         // and what to do when the value changes
+    //         oninput: move |evt| name.set(evt.value.clone()),
+    //     }
+    // })
     // let points_minus_val = minus_val * booster_cost + (*points_left.read()).0;
     // let points_plus_val = (*points_left.read()).0 + minus_val;
 
@@ -70,7 +78,6 @@ pub fn BoosterComponent(cx: Scope, booster: Booster) -> Element {
 
     // The new points_left value if (-) pressed.
     let new_points_minus =  (*points_left.read()).0 + minus_val as f32 * booster.price; 
-    //let new_points_minus =  (*points_left.read()).0 + TryInto::<f32>::try_into(minus_val).unwrap() * booster.price; 
 
     cx.render(rsx!{
         p {
