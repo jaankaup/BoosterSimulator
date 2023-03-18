@@ -46,8 +46,10 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                      
                           //let cards = buy_boosters(&boosters, &mut cx.props.sets.clone());
                           //let lackey_filu = to_lackey(&buy_boosters(&boosters.get(), &mut cx.props.sets.clone()));
+                          let mut path = "decks/".to_string();
+                          path.push_str(name.get());
                           let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0), &mut cx.props.sets.clone()));
-                          fs::write(name.get(), lackey_filu).expect("Unable to write file.");
+                          fs::write(path, lackey_filu).expect("Unable to write file.");
 
                           },
                           "Buy boosters"

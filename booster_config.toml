@@ -1,19 +1,22 @@
-file_name = "decks/mun_pakka.dek"
+file_name = "decks/arjutartifaktit45.dek"
 
+# herjoja kortteja
 [[boosters]]
 set = "alpha"
 amount = 0
-price = 1.5
+price = 1.25
 
+# herjoja kortteja
 [[boosters]]
 set = "beta"
 amount = 0
-price = 1.5
+price = 1.25
 
+# herjoja kortteja
 [[boosters]]
 set = "unlimited"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "an"
@@ -28,13 +31,15 @@ price = 1.0
 [[boosters]]
 set = "revised"
 amount = 0
-price = 1.5
+price = 1.25
 
+# Hulluja moniväri ritareita ja muita legendoja
 [[boosters]]
 set = "legends"
 amount = 0
 price = 1.0
 
+# gobliineja
 [[boosters]]
 set = "dark"
 amount = 0
@@ -48,18 +53,14 @@ price = 1.0
 [[boosters]]
 set = "4e"
 amount = 0
-price = 1.0
+price = 0.75
 
 [[boosters]]
 set = "ia"
 amount = 0
-price = 1.0
+price = 0.75
 
-[[boosters]]
-set = "chk"
-amount = 0
-price = 1.0
-
+# Sengir vampires
 [[boosters]]
 set = "homelands"
 amount = 0
@@ -70,11 +71,13 @@ set = "alliances"
 amount = 0
 price = 1.0
 
+# Spirit of night, gobliineja, phasing
 [[boosters]]
 set = "mirage"
 amount = 0
 price = 1.0
 
+# phyrexsian walker
 [[boosters]]
 set = "visions"
 amount = 0
@@ -83,7 +86,7 @@ price = 1.0
 [[boosters]]
 set = "5e"
 amount = 0
-price = 1.0
+price = 0.75
 
 [[boosters]]
 set = "portal"
@@ -107,5 +110,41 @@ price = 1.25
 
 [[boosters]]
 set = "exodus"
+amount = 0
+price = 1.25
+
+[[boosters]]
+set = "6e"
+amount = 0
+price = 0.75
+
+[[boosters]]
+set = "7e"
+amount = 0
+price = 0.75
+
+[[boosters]]
+set = "portal2"
+amount = 0
+price = 1.25
+
+[[boosters]]
+set = "nemesis"
+amount = 0
+price = 1.25
+
+# Planeswalkers fury!!!
+[[boosters]]
+set = "planeshift"
+amount = 0
+price = 1.25
+
+[[boosters]]
+set = "apocalypse"
+amount = 0
+price = 1.25
+
+[[boosters]]
+set = "odyssey"
 amount = 0
 price = 1.25
