@@ -13,6 +13,7 @@ use std::fs;
 use booster_simulator::components::{
     //Boosters;
     BoosterComponent,
+    Points,
 };
 
 // #[derive(Props)]
@@ -35,9 +36,13 @@ use booster_simulator::components::{
 //     )
 // }
 
+
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
+    use_shared_state_provider(cx, || Points(45));
     let boosters = use_state(&cx, || cx.props.boosters.clone());
+    let points_left = use_shared_state::<Points>(cx).unwrap();
     cx.render(rsx!(
+                  p { "Points left {(*points_left.read()).0}" }
                   boosters.iter().map(|b|
                       rsx!{BoosterComponent { booster: b.clone() }}
                   ))
@@ -53,9 +58,6 @@ fn main() {
     let mut booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
 
     let mut sets = load_mtg();
-    // for x in sets.keys() {
-    //     println!("JEEJEE {:?}", x);
-    // }
     println!("Creating boosters.");
 
     let cards = buy_boosters(&booster_conf.boosters, &mut sets);
