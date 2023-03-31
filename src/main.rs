@@ -19,7 +19,7 @@ use booster_simulator::components::{
 
 
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
-    use_shared_state_provider(cx, || Points(45.0));
+    use_shared_state_provider(cx, || Points(80.0));
 
     // New!
     use_shared_state_provider(cx, || SharedBoosters(cx.props.boosters.clone()));
