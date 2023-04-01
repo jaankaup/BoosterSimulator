@@ -151,11 +151,6 @@ amount = 0
 price = 1.5
 
 [[boosters]]
-set = "coldsnap"
-amount = 0
-price = 1.0
-
-[[boosters]]
 set = "uz"
 amount = 0
 price = 1.0
@@ -176,36 +171,26 @@ amount = 0
 price = 1.0
 
 [[boosters]]
-set = "mm"
-amount = 0
-price = 1.0
-
-[[boosters]]
 set = "prophecy"
 amount = 0
-price = 1.0
+price = 1.25
 
 [[boosters]]
 set = "invasion"
 amount = 0
-price = 1.0
+price = 1.25
 
 [[boosters]]
 set = "torment"
 amount = 0
-price = 1.0
+price = 1.5
 
 [[boosters]]
 set = "judgment"
 amount = 0
-price = 1.0
+price = 1.5
 
 [[boosters]]
 set = "onslaught"
 amount = 0
-price = 1.0
-
-[[boosters]]
-set = "onslaught"
-amount = 0
-price = 1.0
+price = 1.5
