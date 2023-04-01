@@ -80,7 +80,7 @@ pub struct SuperZone<'a> {
     #[xml(attr = "name")]
     name: Cow<'a, str>,
     #[xml(child = "cards")]
-    cards: Vec<Card<'a>>, 
+    cards: Vec<Card<'a>>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
@@ -226,10 +226,16 @@ pub fn to_lackey(cards: &[Card]) -> String {
     let deck = Deck {
         version: "0.8".into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}},
-        super_zone: vec![SuperZone {
+        super_zone: vec![
+            SuperZone {
+            name: std::borrow::Cow::Borrowed("Deck"),
+            cards: vec![],
+            },
+            SuperZone {
             name: std::borrow::Cow::Borrowed("Sideboard"),
             cards: cards.to_owned(),
-        }],
+            },
+        ],
     };
     deck.to_string().unwrap()
 }
@@ -238,15 +244,29 @@ pub fn destroy_sideboard(filename: String) {
 
     println!("Load file {:?}", filename);
     let src = load_from_file(filename.to_string());
-    let binding = src.unwrap();
-    let mut deck = Deck::from_str(&binding).unwrap();
+    let binding = src.unwrap().replace("\r\n\t\t", "").replace("\r\n\t", "").replace("\r\n", "");
+    //let binding = src.unwrap();
+    //println!("{:?}", binding);
+    // let mut deck = Deck::from_str(&binding).unwrap();
+    // println!("{:?}", deck);
+    let start_bytes = binding.find("<superzone name=\"Sideboard\">").unwrap_or(0);
+    if start_bytes != 0 { 
+        let end_bytes = binding.rfind("</superzone>").unwrap_or(binding.len());
+        let result_start = &binding[0..start_bytes];
+        let result_end = &binding[end_bytes+"</superzone>".len()..binding.len()];
+        let result = result_start.to_owned() + result_end; 
+        fs::write(filename, result).expect("Unable to write file.");
+    }
+    // for i in deck.super_zone[1].cards.iter() {
+    //     println!("{:?}", i);
+    // }
 
-    println!("Destroying sideboard from deck {:?}", filename);
-    deck.super_zone.retain(|x| x.name != "Sideboard");
+    // println!("Destroying sideboard from deck {:?}", filename);
+    // deck.super_zone.retain(|x| x.name != "Sideboard");
 
-    println!("Saving file {:?}", filename);
-    let deck_src = deck.to_string().unwrap();
-    fs::write(filename, deck_src).expect("Unable to write file.");
+    // println!("Saving file {:?}", filename);
+    // let deck_src = deck.to_string().unwrap();
+    // fs::write(filename, deck_src).expect("Unable to write file.");
 }
 
 pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
