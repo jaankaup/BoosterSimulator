@@ -1,24 +1,12 @@
-use std::cell::Cell;
 use dioxus::prelude::*;
 use crate::cards::Booster;
 
 pub struct Points(pub f32);
 pub struct SharedBoosters(pub Vec<Booster>);
 
-// pub struct Boosters(Vec<Booster>);
-
-// #[derive(PartialEq, Props)]
-// pub struct BoosterProps {
-//     pub set: String,
-//     pub amount: u32,
-// }
-
-//pub fn BoosterComponent(cx: Scope<Booster>, booster: UseRef<Booster>) -> Element {
-//pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster) -> Element<'a> {
-// pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -> Element {
+#[allow(non_snake_case)]
 #[inline_props]
 pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -> Element {
-    let mut count = use_state(cx, || 0);
     let points_left = use_shared_state::<Points>(cx).unwrap();
     let shared_booster = use_shared_state::<SharedBoosters>(cx).unwrap();
 
@@ -92,8 +80,6 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
             }
             button {
                 style: "{plus_style}",
-                //onclick: move |_| { booster.amount = booster.amount + inc_booster; (*points_left.write()).0 = new_points_plus;  }, "+",
-                //onclick: move |_| { count += inc_booster; (*points_left.write()).0 = new_points_plus;  }, "+",
                 onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + inc_booster; (*points_left.write()).0 = new_points_plus; }, "+",
             },
             button {
@@ -107,24 +93,4 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
             },
         }
     })
-}
-
-fn Yeah(cx: Scope) -> Element {
-    let list = use_ref(cx, Vec::new);
-
-    cx.render(rsx!(
-        p { "Current list: {list.read():?}" }
-        button {
-            onclick: move |event| {
-                list.with_mut(|list| list.push(event));
-            },
-            "Click me!"
-        }
-        button {
-            onclick: move |event| {
-                list.with_mut(|list| list.push(event));
-            },
-            "Click me2!"
-        }
-    ))
 }

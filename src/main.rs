@@ -1,10 +1,7 @@
 use booster_simulator::booster_list::AppStateProps;
-use crate::dioxus_elements::map;
-use std::rc::Rc;
 use dioxus_desktop::Config;
 use std::io::Read;
 use std::fs::File;
-use std::collections::HashMap;
 use booster_simulator::cards::*;
 use dioxus::prelude::*;
 use std::fs;
@@ -14,6 +11,7 @@ use booster_simulator::components::{
     SharedBoosters,
 };
 
+#[allow(non_snake_case)]
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
 
     // Top level properties than can be accessed from child elements.
@@ -39,7 +37,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                   }
                   p {
                       button {
-                          onclick: move |event| {
+                          onclick: move |_| {
                                                                      
                           let mut path = "decks/".to_string();
                           path.push_str(name.get());
@@ -63,9 +61,9 @@ fn main() {
     let mut buffer = String::new();
     f.read_to_string(&mut buffer).unwrap();
 
-    let mut booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
+    let booster_conf: TomlConfig = toml::from_str(&buffer).unwrap(); 
 
-    let mut sets = load_mtg();
+    let sets = load_mtg();
 
     // These properties are used in BoosterApp.
     let app_props = AppStateProps { 
