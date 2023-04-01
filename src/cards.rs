@@ -13,6 +13,7 @@ use std::collections::HashMap;
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct TomlConfig {
     pub file_name: String,
+    pub points: u32,
     pub boosters: Vec<Booster>,
 }
 

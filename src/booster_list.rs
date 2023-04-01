@@ -8,6 +8,8 @@ use crate::cards::CardInput;
 pub struct AppStateProps {
     pub sets: HashMap<String, Vec<CardInput>>,
     pub boosters: Vec<Booster>,
+    pub points: f32,
+    pub deckname: String,
 }
 
 #[derive(PartialEq, Props)]

@@ -1,4 +1,5 @@
-file_name = "decks/arjutartifaktit45.dek"
+file_name = "pahapakka.dek"
+points = 80
 
 # herjoja kortteja
 [[boosters]]
@@ -147,4 +148,4 @@ price = 1.25
 [[boosters]]
 set = "odyssey"
 amount = 0
-price = 1.25
+price = 1.5
