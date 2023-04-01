@@ -1,3 +1,4 @@
+use std::fs;
 use rand::prelude::*;
 use std::borrow::Cow;
 use strong_xml::{XmlRead, XmlWrite};
@@ -55,7 +56,7 @@ pub struct Deck<'a> {
     #[xml(child = "meta")]
     meta: Meta<'a>,
     #[xml(child = "superzone")]
-    super_zone: SuperZone<'a>,
+    super_zone: Vec<SuperZone<'a>>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
@@ -107,7 +108,6 @@ struct Set<'a> {
     #[xml(text)]
     name: Cow<'a, str>,
 }
-
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct CardLackey {
@@ -226,17 +226,36 @@ pub fn to_lackey(cards: &[Card]) -> String {
     let deck = Deck {
         version: "0.8".into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}},
-        super_zone: SuperZone {
+        super_zone: vec![SuperZone {
             name: std::borrow::Cow::Borrowed("Sideboard"),
             cards: cards.to_owned(),
-        },
+        }],
     };
     deck.to_string().unwrap()
 }
 
+pub fn destroy_sideboard(filename: String) {
+
+    println!("Load file {:?}", filename);
+    let src = load_from_file(filename.to_string());
+    let binding = src.unwrap();
+    let mut deck = Deck::from_str(&binding).unwrap();
+
+    println!("Destroying sideboard from deck {:?}", filename);
+    deck.super_zone.retain(|x| x.name != "Sideboard");
+
+    println!("Saving file {:?}", filename);
+    let deck_src = deck.to_string().unwrap();
+    fs::write(filename, deck_src).expect("Unable to write file.");
+}
+
 pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     println!("Loading the card list.");
-    let mut f = File::open("ListOfCardDataFiles.txt")?;
+    load_from_file("ListOfCardDataFiles.txt".to_string())
+}
+
+pub fn load_from_file(filename: String) -> Result<String, Box<dyn Error>> {
+    let mut f = File::open(filename)?;
     let mut buffer = String::new();
     f.read_to_string(&mut buffer)?;
     Ok(buffer)

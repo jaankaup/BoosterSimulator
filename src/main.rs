@@ -48,6 +48,18 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                           "Buy boosters"
                       }
                   }
+                  p {
+                      button {
+                          onclick: move |_| {
+                                                                     
+                          let mut path = "decks/".to_string();
+                          path.push_str(name.get());
+                          destroy_sideboard(path);
+
+                          },
+                          "Destroy sideboard"
+                      }
+                  }
                   boosters.iter().enumerate().map(|(i,b)|
                       rsx!{BoosterComponent { booster: b, index: i, }}
                   ))
