@@ -19,7 +19,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     use_shared_state_provider(cx, || SharedBoosters(cx.props.boosters.clone()));
 
     // Properties used are owned by this element.
-    let boosters = use_state(&cx, || cx.props.boosters.clone());
+    let boosters = use_state(cx, || cx.props.boosters.clone());
     let name = use_state(cx, || cx.props.deckname.clone());
     let points_left = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
@@ -67,7 +67,7 @@ fn main() {
 
     // These properties are used in BoosterApp.
     let app_props = AppStateProps { 
-        sets: sets,
+        sets,
         boosters: booster_conf.boosters,
         points: booster_conf.points as f32,
         deckname: booster_conf.file_name,

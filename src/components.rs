@@ -58,13 +58,13 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
     //let minus_val = if *count.get() == 0 { 0 } else { 1 };
 
     // How much to increase booster count whe pressing (+).
-    let inc_booster = if (*points_left.read()).0 >= booster.price { 1 } else { 0 };
+    let inc_booster = if points_left.read().0 >= booster.price { 1 } else { 0 };
 
     // The new points_left value if (+) pressed.
-    let new_points_plus =  (*points_left.read()).0 - inc_booster as f32 * booster.price; 
+    let new_points_plus =  points_left.read().0 - inc_booster as f32 * booster.price; 
 
     // The new points_left value if (-) pressed.
-    let new_points_minus =  (*points_left.read()).0 + minus_val as f32 * booster.price; 
+    let new_points_minus =  points_left.read().0 + minus_val as f32 * booster.price; 
 
 
     cx.render(rsx!{
@@ -80,11 +80,11 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
             }
             button {
                 style: "{plus_style}",
-                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + inc_booster; (*points_left.write()).0 = new_points_plus; }, "+",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + inc_booster; points_left.write().0 = new_points_plus; }, "+",
             },
             button {
                 style: "{minus_style}",
-                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount - minus_val; (*points_left.write()).0 = new_points_minus; }, "-",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount - minus_val; points_left.write().0 = new_points_minus; }, "-",
             },
             p {
                 style: "{count_style}",

@@ -149,3 +149,63 @@ price = 1.25
 set = "odyssey"
 amount = 0
 price = 1.5
+
+[[boosters]]
+set = "coldsnap"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "uz"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "ul"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "ud"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "mm"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "mm"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "prophecy"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "invasion"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "torment"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "judgment"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "onslaught"
+amount = 0
+price = 1.0
+
+[[boosters]]
+set = "onslaught"
+amount = 0
+price = 1.0

@@ -65,6 +65,7 @@ pub struct Meta<'a> {
     game: Game<'a>,
 }
 
+#[warn(clippy::needless_late_init)]
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
 #[xml(tag = "game")]
 pub struct Game<'a> {
@@ -163,7 +164,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let mut rng = thread_rng();
 
         while rare_counter < rare_count {
-            let ind = rng.gen_range(0..rares.len()) as usize; 
+            let ind = rng.gen_range(0..rares.len()); 
 
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
@@ -171,11 +172,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: rares[ind].set.clone().into()},
                 });
 
-            rare_counter = rare_counter + 1;
+            rare_counter += 1;
         }
 
         while uncommon_counter < uncommon_count {
-            let ind = rng.gen_range(0..uncommons.len()) as usize; 
+            let ind = rng.gen_range(0..uncommons.len()); 
 
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
@@ -183,7 +184,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: uncommons[ind].set.clone().into()},
                 });
 
-            uncommon_counter = uncommon_counter + 1;
+            uncommon_counter += 1;
         }
 
         
@@ -194,7 +195,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let mountain = String::from("Basic Land - Mountain");
 
         while common_counter < common_count {
-            let ind = rng.gen_range(0..commons.len()) as usize; 
+            let ind = rng.gen_range(0..commons.len()); 
             // println!("{:?}", commons[ind].card_type);
 
             if commons[ind].card_type.eq(&swamp) ||
@@ -213,22 +214,22 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: commons[ind].set.clone().into()},
                 });
 
-            common_counter = common_counter + 1;
+            common_counter += 1;
         }
     }
     println!("Deck size {:?} cards.", result.len());
     result
 }
 
-pub fn to_lackey(cards: &Vec<Card>) -> String {
+pub fn to_lackey(cards: &[Card]) -> String {
 
     let deck = Deck {
         version: "0.8".into(),
-        meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}}.into(),
+        meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}},
         super_zone: SuperZone {
             name: std::borrow::Cow::Borrowed("Sideboard"),
-            cards: cards.clone(),
-        }.into(),
+            cards: cards.to_owned(),
+        },
     };
     deck.to_string().unwrap()
 }
@@ -251,28 +252,25 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
     for list in card_lists.files_to_include {
 
         let file_loc = String::from("sets/") + &list.file;
-        // println!("{:?}", file_loc);
         if let Ok(lines) = read_lines(file_loc) {
 
             let mut counter = 0;
-        	for line in lines {
-                    if let Ok(ip) = line {
-                        counter = counter + 1;
-                        if counter < 4 { continue };
-                        let ll = ip.split("\t").collect::<Vec<&str>>();
-                        if ll.len() < 2 { continue; }
+        	for line in lines.flatten() {
+                counter += 1;
+                if counter < 4 { continue };
+                let ll = line.split('\t').collect::<Vec<&str>>();
+                if ll.len() < 2 { continue; }
 
-                        set_hash_map.entry(ll[1]
-                        .to_string())
-                        .or_default()
-                        .push(CardInput {
-                                name: ll[0].to_string(),
-                                set: ll[1].to_string(),
-                                imagefile: ll[2].to_string(),
-                                rarity: ll[12].to_string(),
-                                card_type: ll[8].to_string()
-                        });
-                    }
+                set_hash_map.entry(ll[1]
+                .to_string())
+                .or_default()
+                .push(CardInput {
+                        name: ll[0].to_string(),
+                        set: ll[1].to_string(),
+                        imagefile: ll[2].to_string(),
+                        rarity: ll[12].to_string(),
+                        card_type: ll[8].to_string()
+                });
         	}
         }
     }
