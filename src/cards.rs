@@ -241,20 +241,21 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         for x in result_input_format.iter() {
             concatenated.push(x.clone());
         }
-        let d = generateDeck(&concatenated, &colors, 12, 55);
+        let d = generateDeck(&concatenated, &colors, 20, 60);
     }
     println!("Deck size {:?} cards.", result.len());
     result
 }
 
-pub fn to_lackey(cards: &[Card]) -> String {
+pub fn to_lackey(cards: &[Card], to_deck: bool) -> String {
 
+    let super_zone_name = if to_deck { "Deck" } else { "Sideboard" };
     let deck = Deck {
         version: "0.8".into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}},
         super_zone: 
             SuperZone {
-            name: std::borrow::Cow::Borrowed("Deck"),
+            name: std::borrow::Cow::Borrowed(super_zone_name),
             //cards: vec![],
             cards: cards.to_owned(),
             },

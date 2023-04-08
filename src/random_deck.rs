@@ -115,10 +115,12 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
     let rng = thread_rng();
 
     let mut summons_ok = false;
+    let mut tries = 0;
 
     // Create decsk as long as there are enough summon spells.
-    while !summons_ok {
+    while !summons_ok && tries < 100 {
 
+        tries += 1;
         let mut summon_cards = 0;
 
         // Add artifacts.
@@ -155,11 +157,16 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
         if summon_cards >= min_summon_spells {  
             summons_ok = true;
         }
-        println!("Trying to create deck :: {:?}", summon_cards);
+        else {
+            cards.clear();
+        }
     }
 
     // artifacts_to_deck
-    println!("{:?}", cards);
+    if tries == 100 { println!("Tried 100 times. Not enough creatures. Buy some more boosters!"); }
+    else {
+        println!("{:?}", cards);
+    }
     cards
 }
 

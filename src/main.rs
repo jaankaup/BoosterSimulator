@@ -53,7 +53,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                           let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
                                                                     &mut cx.props.sets.clone(),
                                                                     false,
-                                                                    vec![Colors::Black, Colors::Red]));
+                                                                    vec![Colors::Black, Colors::Red]), false);
                           fs::write(path, lackey_filu).expect("Unable to write file.");
 
                           },
@@ -73,10 +73,10 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                           if *green_checked.get() { colors.push(Colors::Green); }
                           if *white_checked.get() { colors.push(Colors::White); }
                           if (colors.len() != 0) {
-                            let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
-                                                                      &mut cx.props.sets.clone(),
-                                                                      true,
-                                                                      colors));
+                          let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                                                    &mut cx.props.sets.clone(),
+                                                                    true,
+                                                                    colors), true);
                             fs::write(path, lackey_filu).expect("Unable to write file.");
                             }
                           },
