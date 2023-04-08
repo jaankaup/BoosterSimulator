@@ -1,3 +1,4 @@
+use crate::random_deck::{generateDeck, Colors};
 use std::fs;
 use rand::prelude::*;
 use std::borrow::Cow;
@@ -39,11 +40,13 @@ pub struct Filetoinclude  {
 
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct CardInput {
-    name: String,
-    set: String,
-    imagefile: String,
-    rarity: String,
-    card_type: String,
+    pub name: String,
+    pub set: String,
+    pub imagefile: String,
+    pub rarity: String,
+    pub card_type: String,
+    pub color: String,
+    pub text: String,
 }
 
 // LACKEY output formats.
@@ -56,7 +59,8 @@ pub struct Deck<'a> {
     #[xml(child = "meta")]
     meta: Meta<'a>,
     #[xml(child = "superzone")]
-    super_zone: Vec<SuperZone<'a>>,
+    super_zone: SuperZone<'a>,
+    //super_zone: Vec<SuperZone<'a>>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
@@ -88,25 +92,25 @@ pub struct SuperZone<'a> {
 #[allow(unused_must_use)]
 pub struct Card<'a> {
     #[xml(child = "name")]
-    name: Name<'a>,
+    pub name: Name<'a>,
     #[xml(child = "set")]
-    set: Set<'a>,
+    pub set: Set<'a>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
 #[xml(tag = "name")]
-struct Name<'a> {
+pub struct Name<'a> {
     #[xml(attr = "id")]
-    id: Cow<'a, str>,
+    pub id: Cow<'a, str>,
     #[xml(text)]
-    name: Cow<'a, str>,
+    pub name: Cow<'a, str>,
 }
 
 #[derive(XmlWrite, XmlRead, PartialEq, Debug, Clone)]
 #[xml(tag = "set")]
-struct Set<'a> {
+pub struct Set<'a> {
     #[xml(text)]
-    name: Cow<'a, str>,
+    pub name: Cow<'a, str>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -121,11 +125,20 @@ pub struct CardName {
     #[serde(rename = "$value")]
     name: String, 
 }
+
+pub fn cardinput_to_card(card_input: &CardInput) -> Card {
+
+    Card { name: Name {id: card_input.imagefile.clone().into(),
+                       name: card_input.name.clone().into()},
+           set: Set { name: card_input.set.clone().into()},
+    }
+}
  
-pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>) -> Vec<Card<'a>> {
+pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
 
     println!("Create boosters.");
     let mut result = Vec::<Card>::new();
+    let mut result_input_format = Vec::<CardInput>::new();
 
     for booster in boosters {
         
@@ -171,6 +184,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                                    name: rares[ind].name.clone().into()},
                        set: Set { name: rares[ind].set.clone().into()},
                 });
+            result_input_format.push(rares[ind].clone());
 
             rare_counter += 1;
         }
@@ -184,10 +198,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: uncommons[ind].set.clone().into()},
                 });
 
+            result_input_format.push(uncommons[ind].clone());
             uncommon_counter += 1;
         }
-
         
+        // TODO: list
         let swamp = String::from("Basic Land - Swamp");
         let plains = String::from("Basic Land - Plains");
         let forest = String::from("Basic Land - Forest");
@@ -214,8 +229,16 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                        set: Set { name: commons[ind].set.clone().into()},
                 });
 
+            result_input_format.push(commons[ind].clone());
             common_counter += 1;
         }
+    }
+    if random_deck {
+        let mut concatenated = Vec::<CardInput>::new();  
+        for x in result_input_format.iter() {
+            concatenated.push(x.clone());
+        }
+        let d = generateDeck(&concatenated, &colors, 12, 55);
     }
     println!("Deck size {:?} cards.", result.len());
     result
@@ -226,16 +249,23 @@ pub fn to_lackey(cards: &[Card]) -> String {
     let deck = Deck {
         version: "0.8".into(),
         meta: Meta { game: Game {name:std::borrow::Cow::Borrowed("magic")}},
-        super_zone: vec![
+        super_zone: 
             SuperZone {
             name: std::borrow::Cow::Borrowed("Deck"),
-            cards: vec![],
-            },
-            SuperZone {
-            name: std::borrow::Cow::Borrowed("Sideboard"),
+            //cards: vec![],
             cards: cards.to_owned(),
             },
-        ],
+        // super_zone: vec![
+        //     SuperZone {
+        //     name: std::borrow::Cow::Borrowed("Deck"),
+        //     //cards: vec![],
+        //     cards: cards.to_owned(),
+        //     },
+        //     SuperZone {
+        //     name: std::borrow::Cow::Borrowed("Sideboard"),
+        //     cards: cards.to_owned(),
+        //     },
+        // ],
     };
     deck.to_string().unwrap()
 }
@@ -244,19 +274,20 @@ pub fn destroy_sideboard(filename: String) {
 
     println!("Load file {:?}", filename);
     let src = load_from_file(filename.to_string());
-    let binding = src.unwrap().replace("\r\n\t\t", "").replace("\r\n\t", "").replace("\r\n", "");
-    //let binding = src.unwrap();
+    //let binding = src.unwrap().replace("\r\n\t\t", "").replace("\r\n\t", "").replace("\r\n", "");
+    let binding = src.unwrap();
     //println!("{:?}", binding);
-    // let mut deck = Deck::from_str(&binding).unwrap();
-    // println!("{:?}", deck);
-    let start_bytes = binding.find("<superzone name=\"Sideboard\">").unwrap_or(0);
-    if start_bytes != 0 { 
-        let end_bytes = binding.rfind("</superzone>").unwrap_or(binding.len());
-        let result_start = &binding[0..start_bytes];
-        let result_end = &binding[end_bytes+"</superzone>".len()..binding.len()];
-        let result = result_start.to_owned() + result_end; 
-        fs::write(filename, result).expect("Unable to write file.");
-    }
+    let deck = Deck::from_str(&binding).unwrap();
+    println!("{:?}", deck);
+
+    //++ let start_bytes = binding.find("<superzone name=\"Sideboard\">").unwrap_or(0);
+    //++ if start_bytes != 0 { 
+    //++     let end_bytes = binding.rfind("</superzone>").unwrap_or(binding.len());
+    //++     let result_start = &binding[0..start_bytes];
+    //++     let result_end = &binding[end_bytes+"</superzone>".len()..binding.len()];
+    //++     let result = result_start.to_owned() + result_end; 
+    //++     fs::write(filename, result).expect("Unable to write file.");
+    //++ }
     // for i in deck.super_zone[1].cards.iter() {
     //     println!("{:?}", i);
     // }
@@ -308,7 +339,9 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
                         set: ll[1].to_string(),
                         imagefile: ll[2].to_string(),
                         rarity: ll[12].to_string(),
-                        card_type: ll[8].to_string()
+                        card_type: ll[8].to_string(),
+                        color: ll[4].to_string(),
+                        text: ll[16].to_string(),
                 });
         	}
         }

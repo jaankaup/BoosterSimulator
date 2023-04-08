@@ -10,6 +10,8 @@ use booster_simulator::components::{
     Points,
     SharedBoosters,
 };
+use booster_simulator::random_deck::{Colors};
+
 
 #[allow(non_snake_case)]
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
@@ -41,7 +43,10 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                      
                           let mut path = "decks/".to_string();
                           path.push_str(name.get());
-                          let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0), &mut cx.props.sets.clone()));
+                          let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                                                    &mut cx.props.sets.clone(),
+                                                                    true,
+                                                                    vec![Colors::Black, Colors::Red]));
                           fs::write(path, lackey_filu).expect("Unable to write file.");
 
                           },
@@ -67,6 +72,8 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
 }
 
 fn main() {
+
+
 
     // Load deck informations and application settings.
     let mut f = File::open("booster_config.toml").expect("Couldn't find 'booster_config_toml'.");
