@@ -217,7 +217,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
                commons[ind].card_type.eq(&plains) ||
                commons[ind].card_type.eq(&forest) ||
                commons[ind].card_type.eq(&island) ||
-               commons[ind].card_type.eq(&mountain) {
+               commons[ind].card_type.eq(&mountain) ||
+               commons[ind].name.to_lowercase().contains("snow-covered") ||
+               commons[ind].text.to_lowercase().contains("snow-covered") ||
+               commons[ind].text.to_lowercase().contains(" ante ") {
 
                 // println!("Omittin card: {:?}", commons[ind]);
                 continue;

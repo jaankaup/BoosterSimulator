@@ -107,89 +107,142 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
     // The deck.
     let mut cards: Vec<Card> = Vec::new();
 
-    let mut card_counter = 0;
-
     let mut artifact_count = 10;
-    let cards_per_color: u32 = (deck_size - artifact_count) / colors.len() as u32;
+    let mut multicolor_count = 10;
 
     // Rare (40%, uncommon 30%, common 30%) 
 
-    let rare_prob = 40;
-    let uncommon_prob = 30;
-    let common_prob = 30;
+    let rng = thread_rng();
+
+    let mut summons_ok = false;
+
+    // Create decsk as long as there are enough summon spells.
+    while !summons_ok {
+
+        let mut summon_cards = 0;
+
+        // Add artifacts.
+        cards_map.entry(Colors::Colorless).or_insert(Vec::<CardInput>::new());
+
+        let artifacts = cards_map.get(&Colors::Colorless).unwrap().clone();
+        let mut artifacts_to_deck = generate_cards(&artifacts, 10, deck_size, [40,30,30]);
+
+        cards_map.entry(Colors::Multicolor).or_insert(Vec::<CardInput>::new());
+
+
+        let multicolors = cards_map.get(&Colors::Multicolor).unwrap().clone();
+        let mut multicolors_to_deck = generate_cards(&multicolors, 10, deck_size, [40,30,30]);
+
+        let cards_remaining = deck_size - artifacts_to_deck.0.len() as u32 - multicolors_to_deck.0.len() as u32;
+        let cards_per_color = cards_remaining / colors.len() as u32;
+
+        cards.append(&mut artifacts_to_deck.0);
+        cards.append(&mut multicolors_to_deck.0);
+
+        summon_cards += artifacts_to_deck.1;
+        summon_cards += multicolors_to_deck.1;
+
+        for c in colors {
+            cards_map.entry(*c).or_insert(Vec::<CardInput>::new());
+            let color_cards = cards_map.get(&c).unwrap().clone();
+            let mut random_color_cards = generate_cards(&color_cards, cards_per_color, deck_size, [40,30,30]);
+            cards.append(&mut random_color_cards.0);
+            summon_cards += random_color_cards.1;
+        }
+
+        // Check for summons cards.
+        
+        if summon_cards >= min_summon_spells {  
+            summons_ok = true;
+        }
+        println!("Trying to create deck :: {:?}", summon_cards);
+    }
+
+    // artifacts_to_deck
+    println!("{:?}", cards);
+    cards
+}
+
+fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, remaining_count: u32, propabilies: [u32; 3]) -> (Vec<Card<'static>>, u32)  {
+
+    let mut result = Vec::<Card>::new();
+
+    let mut rares = input_cards.clone().into_iter().filter(|c| c.rarity == "R").map(|c| c.clone()).collect::<Vec<_>>();
+    let mut uncommons = input_cards.clone().into_iter().filter(|c| c.rarity == "U").map(|c| c.clone()).collect::<Vec<_>>();
+    let mut commons = input_cards.clone().into_iter().filter(|c| c.rarity == "C").map(|c| c.clone()).collect::<Vec<_>>();
+
+    let mut count = pref_count;
+    let mut deck_card_count = pref_count;
+
+    let mut summon_cards = 0;
 
     let mut rng = thread_rng();
 
-    // Add artifacts.
-    cards_map.entry(Colors::Colorless).or_insert(Vec::<CardInput>::new());
-    let artifacts = cards_map.get(&Colors::Colorless).unwrap().clone();
-    let mut artifacts_rares = artifacts.clone().into_iter().filter(|c| c.rarity == "R").map(|c| c.clone()).collect::<Vec<_>>();
-    let mut artifacts_uncommons = artifacts.clone().into_iter().filter(|c| c.rarity == "U").map(|c| c.clone()).collect::<Vec<_>>();
-    let mut artifacts_commons = artifacts.clone().into_iter().filter(|c| c.rarity == "C").map(|c| c.clone()).collect::<Vec<_>>();
+    let prop_rare = propabilies[0];
+    let prop_uncommon = prop_rare + propabilies[1];
+    let prop_common = prop_uncommon + propabilies[2];
 
-    let mut rares = 0;
-    let mut uncommons = 0;
-    let mut commons = 0;
-
-    while artifact_count > 0 && (artifacts_rares.len() + artifacts_uncommons.len() + artifacts_commons.len() > 0) {
+    while count > 0 && (rares.len() + uncommons.len() + commons.len() > 0 && deck_card_count > 0 ) {
 
          let propability = rng.gen_range(0..100);
-         println!("propability == {:?}", propability);
-         println!("artifacts_rares.len() == {:?}", artifacts_rares.len());
-         println!("artifacts_uncommons.len() == {:?}", artifacts_uncommons.len());
-         println!("artifacts_commons.len() == {:?}", artifacts_commons.len());
 
          // Rare
-         if propability < 40 && artifacts_rares.len() > 0 { 
-            println!("Rare. {:?}", artifact_count);
-            let index = rng.gen_range(0..artifacts_rares.len());
-            let the_card = artifacts_rares.swap_remove(index);
-            cards.push(
+         if propability < prop_rare && rares.len() > 0 { 
+            // println!("Rare. {:?}", count);
+            let index = rng.gen_range(0..rares.len());
+            let the_card = rares.swap_remove(index);
+
+            // Skip ante cards.
+            if the_card.text.to_lowercase().contains("ante") { continue; }
+
+            if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
+
+            result.push(
                     Card { name: Name {id: the_card.imagefile.clone().into(),
                     name: the_card.name.clone().into()},
                     set: Set { name: the_card.set.clone().into()},
                     });
-
-            artifact_count -= 1;
+            deck_card_count -= 1;
+            count -= 1;
          }
          // Uncommon
-         else if propability < 70 && artifacts_uncommons.len() > 0 { 
-            println!("Uncommon. {:?}", artifact_count);
-                let index = rng.gen_range(0..artifacts_uncommons.len());
-                let the_card = artifacts_uncommons.swap_remove(index);
-                cards.push(
-                        Card { name: Name {id: the_card.imagefile.clone().into(),
-                        name: the_card.name.clone().into()},
-                        set: Set { name: the_card.set.clone().into()},
-                        });
-                artifact_count -= 1;
+         else if propability < prop_uncommon && uncommons.len() > 0 { 
+            let index = rng.gen_range(0..uncommons.len());
+            let the_card = uncommons.swap_remove(index);
+
+            // Skip ante cards.
+            if the_card.text.to_lowercase().contains("ante") { continue; }
+
+            if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
+
+            result.push(
+                    Card { name: Name {id: the_card.imagefile.clone().into(),
+                    name: the_card.name.clone().into()},
+                    set: Set { name: the_card.set.clone().into()},
+                    });
+            deck_card_count -= 1;
+            count -= 1;
          }
          // Common
          else {
-            if artifacts_commons.len() == 0 { continue }
-            println!("Common. {:?}", artifact_count);
-            let index = rng.gen_range(0..artifacts_commons.len());
-            let the_card = artifacts_commons.swap_remove(index);
-            cards.push(
+            if commons.len() == 0 { continue }
+            // println!("Common. {:?}", count);
+            let index = rng.gen_range(0..commons.len());
+            let the_card = commons.swap_remove(index);
+
+            // Skip ante cards.
+            if the_card.text.to_lowercase().contains("ante") { continue; }
+
+            if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
+
+            result.push(
                     Card { name: Name {id: the_card.imagefile.clone().into(),
                     name: the_card.name.clone().into()},
                     set: Set { name: the_card.set.clone().into()},
                     });
-            artifact_count -= 1;
+            deck_card_count -= 1;
+            count -= 1;
          }
-         println!("pah");
     }
-
-    // for i in 0..cmp::min(artifacts.len() as u32, artifact_count as u32) {
-    //     let ind = rng.gen_range(0..cards_map.get.len()); 
-    // }
-
-    //    get(&Colors::Colorless).unwrap_or_else(|| &Vec::<CardInput>::new()); 
-
-    // Get the multicolor cards that match colors. TODO if colors > 1.
-    // let actual_multicolor = Vec<_> = input_cards.iter().filter(|c| c.color.len() > 1).collect(); 
-
-    println!("{:?}", cards);
-    
-    cards
+    (result, summon_cards)
 }

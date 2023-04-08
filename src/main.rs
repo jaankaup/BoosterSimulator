@@ -25,6 +25,13 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     let name = use_state(cx, || cx.props.deckname.clone());
     let points_left = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
+    let red_checked = use_state(cx, || false);
+    let black_checked = use_state(cx, || false);
+    let blue_checked = use_state(cx, || false);
+    let green_checked = use_state(cx, || false);
+    let white_checked = use_state(cx, || false);
+
+    let new_red = !red_checked;
 
     // Render.
     cx.render(rsx!(
@@ -45,7 +52,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                           path.push_str(name.get());
                           let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
                                                                     &mut cx.props.sets.clone(),
-                                                                    true,
+                                                                    false,
                                                                     vec![Colors::Black, Colors::Red]));
                           fs::write(path, lackey_filu).expect("Unable to write file.");
 
@@ -59,10 +66,100 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                      
                           let mut path = "decks/".to_string();
                           path.push_str(name.get());
-                          destroy_sideboard(path);
-
+                          let mut colors = Vec::<Colors>::new(); 
+                          if *red_checked.get() { colors.push(Colors::Red); }
+                          if *black_checked.get() { colors.push(Colors::Black); }
+                          if *blue_checked.get() { colors.push(Colors::Blue); }
+                          if *green_checked.get() { colors.push(Colors::Green); }
+                          if *white_checked.get() { colors.push(Colors::White); }
+                          if (colors.len() != 0) {
+                            let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                                                      &mut cx.props.sets.clone(),
+                                                                      true,
+                                                                      colors));
+                            fs::write(path, lackey_filu).expect("Unable to write file.");
+                            }
                           },
-                          "Destroy sideboard"
+                          "Generate deck"
+                      }
+                  }
+                  p {
+                      div {
+                        input {
+                            r#type: "checkbox",
+                            onclick: move |_| { red_checked.modify(|v| !v); },
+                            id: "red",
+                            value: "red",
+                            name: "red",
+                        }
+                        label {
+                            r#for: "red",
+                            "red"
+
+                        }
+                      }
+                  }
+                  p {
+                      div {
+                        input {
+                            r#type: "checkbox",
+                            id: "black",
+                            value: "black",
+                            name: "black",
+                            onclick: move |_| { black_checked.modify(|v| !v); },
+                        }
+                        label {
+                            r#for: "black",
+                            "black"
+
+                        }
+                      }
+                  }
+                  p {
+                      div {
+                        input {
+                            r#type: "checkbox",
+                            onclick: move |_| { blue_checked.modify(|v| !v); },
+                            id: "blue",
+                            value: "blue",
+                            name: "blue",
+                        }
+                        label {
+                            r#for: "blue",
+                            "blue"
+
+                        }
+                      }
+                  }
+                  p {
+                      div {
+                        input {
+                            r#type: "checkbox",
+                            id: "green",
+                            value: "green",
+                            name: "green",
+                            onclick: move |_| { green_checked.modify(|v| !v); },
+                        }
+                        label {
+                            r#for: "green",
+                            "green"
+
+                        }
+                      }
+                  }
+                  p {
+                      div {
+                        input {
+                            r#type: "checkbox",
+                            id: "white",
+                            value: "white",
+                            name: "white",
+                            onclick: move |_| { white_checked.modify(|v| !v); },
+                        }
+                        label {
+                            r#for: "white",
+                            "white"
+                        }
                       }
                   }
                   boosters.iter().enumerate().map(|(i,b)|
