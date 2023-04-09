@@ -241,9 +241,9 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         for x in result_input_format.iter() {
             concatenated.push(x.clone());
         }
-        let d = generateDeck(&concatenated, &colors, 20, 60);
+        result = generateDeck(concatenated, colors, 20, 60);
     }
-    println!("Deck size {:?} cards.", result.len());
+    //println!("Deck size {:?} cards.", result.len());
     result
 }
 
@@ -344,7 +344,7 @@ pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
                         imagefile: ll[2].to_string(),
                         rarity: ll[12].to_string(),
                         card_type: ll[8].to_string(),
-                        color: ll[4].to_string(),
+                        color: ll[5].to_string(),
                         text: ll[16].to_string(),
                 });
         	}

@@ -33,8 +33,10 @@ fn color_to_char(color: &Colors) -> char {
 
 // const ColorChar: [char; 5] = ['R', 'B', 'U', 'W', 'G'];  
 
-pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
-                    colors: &'a Vec<Colors>,
+//pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
+pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
+                    colors: Vec<Colors>,
+                    //colors: &'a Vec<Colors>,
                     min_summon_spells: u32,
                     deck_size: u32) -> Vec<Card<'a>> {
 
@@ -44,6 +46,7 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
     // Find multicolor cards.
     for i in input_cards {
 
+        if i.name == "Badlands" { println!("{:?}", i);}
         // Multicolor.
         if i.color.len() > 1 {
             let mut contains = false;
@@ -54,9 +57,9 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
                 let mut found_color = false;
 
                 // Card color belongs to the deck color.
-                for deck_color in colors {
+                for deck_color in &colors {
                     // We found a color match.
-                    if c == color_to_char(deck_color) {
+                    if c == color_to_char(&deck_color) {
                         found_color = true;
                         break;
                     }
@@ -144,7 +147,7 @@ pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
         summon_cards += artifacts_to_deck.1;
         summon_cards += multicolors_to_deck.1;
 
-        for c in colors {
+        for c in &colors {
             cards_map.entry(*c).or_insert(Vec::<CardInput>::new());
             let color_cards = cards_map.get(&c).unwrap().clone();
             let mut random_color_cards = generate_cards(&color_cards, cards_per_color, deck_size, [40,30,30]);
