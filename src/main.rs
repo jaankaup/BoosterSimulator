@@ -31,8 +31,6 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     let green_checked = use_state(cx, || false);
     let white_checked = use_state(cx, || false);
 
-    let new_red = !red_checked;
-
     // Render.
     cx.render(rsx!(
                   p { "Points used {(*points_used.read()).0}" }
