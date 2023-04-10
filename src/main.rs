@@ -48,14 +48,14 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                       button {
                           onclick: move |_| {
                                                                      
-                          let mut path = "decks/".to_string();
-                          path.push_str(name.get());
-                          let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
-                                                                    &mut cx.props.sets.clone(),
-                                                                    false,
-                                                                    vec![Colors::Black, Colors::Red]), false);
-                          fs::write(path, lackey_filu).expect("Unable to write file.");
-
+                              let mut path = "decks/".to_string();
+                              path.push_str(name.get());
+                              let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                                                        &mut cx.props.sets.clone(),
+                                                                        false,
+                                                                        vec![Colors::Black, Colors::Red]), false);
+                              fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                              println!("Created file '{:?}'", path);
                           },
                           "Buy boosters"
                       }
@@ -64,23 +64,24 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                       button {
                           onclick: move |_| {
                                                                      
-                                let mut path = "decks/".to_string();
-                                path.push_str(name.get());
-                                let mut colors = Vec::<Colors>::new(); 
-                                if *red_checked.get() { colors.push(Colors::Red); }
-                                if *black_checked.get() { colors.push(Colors::Black); }
-                                if *blue_checked.get() { colors.push(Colors::Blue); }
-                                if *green_checked.get() { colors.push(Colors::Green); }
-                                if *white_checked.get() { colors.push(Colors::White); }
-                                if colors.len() != 0 {
-                                    let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
-                                                                              &mut cx.props.sets.clone(),
-                                                                              true,
-                                                                              colors), true);
-                                    fs::write(path, lackey_filu).expect("Unable to write file.");
-                                }
-                                else { println!("Please choose at least one color."); }
-                                },
+                              let mut path = "decks/".to_string();
+                              path.push_str(name.get());
+                              let mut colors = Vec::<Colors>::new(); 
+                              if *red_checked.get() { colors.push(Colors::Red); }
+                              if *black_checked.get() { colors.push(Colors::Black); }
+                              if *blue_checked.get() { colors.push(Colors::Blue); }
+                              if *green_checked.get() { colors.push(Colors::Green); }
+                              if *white_checked.get() { colors.push(Colors::White); }
+                              if colors.len() != 0 {
+                                  let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                                                            &mut cx.props.sets.clone(),
+                                                                            true,
+                                                                            colors), true);
+                                  fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                                  println!("Created file '{:?}'", path);
+                              }
+                              else { println!("Please choose at least one color."); }
+                          },
                           "Generate deck"
                       }
                   }

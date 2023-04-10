@@ -46,7 +46,6 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
     // Find multicolor cards.
     for i in input_cards {
 
-        if i.name == "Badlands" { println!("{:?}", i);}
         // Multicolor.
         if i.color.len() > 1 {
             let mut contains = false;
@@ -104,8 +103,6 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
             }
         }
     }
-
-    //println!("{:?}", cards_map);
 
     // The deck.
     let mut cards: Vec<Card> = Vec::new();

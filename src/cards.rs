@@ -182,6 +182,7 @@ fn drop_card(card: &CardInput) -> bool {
  
 pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
 
+    println!("\n");
     println!("Create boosters.");
     let mut result = Vec::<Card>::new();
     let mut result_input_format = Vec::<CardInput>::new();
@@ -196,7 +197,9 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         let mut uncommons = Vec::<CardInput>::new(); 
         let mut commons = Vec::<CardInput>::new(); 
 
-        println!("Set {:?}. Amount {:?}", booster.set, booster.amount);
+        if booster.amount > 0 {
+            println!("Set {:?}. Amount {:?}", booster.set, booster.amount);
+        }
 
         // Filter set using rarity.
         let the_set = sets.get(&booster.set).unwrap();
