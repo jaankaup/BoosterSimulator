@@ -12,6 +12,24 @@ use std::io::prelude::*;
 use std::error::Error;
 use std::collections::HashMap;
 
+const deleted_names: [&str; 6] =
+    ["Basic Land - Swamp",
+     "Basic Land - Plains", 
+     "Basic Land - Swamp",
+     "Basic Land - Forest",
+     "Basic Land - Island",
+     "Basic Land - Mountain"
+];
+
+const deleted_names_contains: [&str; 1] =
+    ["snow-covered"
+];
+
+const deleted_text_contains: [&str; 2] =
+    ["snow-covered",
+     " ante.",
+];
+
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct TomlConfig {
     pub file_name: String,
@@ -133,6 +151,34 @@ pub fn cardinput_to_card(card_input: &CardInput) -> Card {
            set: Set { name: card_input.set.clone().into()},
     }
 }
+
+/// A filter function. Decided if the cards should be ignored.
+fn drop_card(card: &CardInput) -> bool {
+
+    let mut drop = false;
+
+    // Drop exact card names.
+    for name in deleted_names {
+        if card.card_type == name { drop = true; break; }
+    }
+
+    // If the card name contains these words. 
+    if !drop {
+        for text in deleted_names_contains {
+            if card.name.to_lowercase().contains(text) { drop = true; break; }
+        }
+
+    }
+    // If the card text contains these words. 
+    if !drop {
+        for text in deleted_text_contains {
+            if card.text.to_lowercase().contains(text) { drop = true; break; }
+        }
+    }
+    
+    drop
+
+}
  
 pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
 
@@ -179,6 +225,8 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()); 
 
+            if drop_card(&rares[ind]) { continue; }
+
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
                                    name: rares[ind].name.clone().into()},
@@ -192,6 +240,8 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while uncommon_counter < uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()); 
 
+            if drop_card(&uncommons[ind]) { continue; }
+
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
                                    name: uncommons[ind].name.clone().into()},
@@ -202,29 +252,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
             uncommon_counter += 1;
         }
         
-        // TODO: list
-        let swamp = String::from("Basic Land - Swamp");
-        let plains = String::from("Basic Land - Plains");
-        let forest = String::from("Basic Land - Forest");
-        let island = String::from("Basic Land - Island");
-        let mountain = String::from("Basic Land - Mountain");
-
         while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()); 
-            // println!("{:?}", commons[ind].card_type);
 
-            if commons[ind].card_type.eq(&swamp) ||
-               commons[ind].card_type.eq(&plains) ||
-               commons[ind].card_type.eq(&forest) ||
-               commons[ind].card_type.eq(&island) ||
-               commons[ind].card_type.eq(&mountain) ||
-               commons[ind].name.to_lowercase().contains("snow-covered") ||
-               commons[ind].text.to_lowercase().contains("snow-covered") ||
-               commons[ind].text.to_lowercase().contains(" ante ") {
-
-                // println!("Omittin card: {:?}", commons[ind]);
-                continue;
-            } 
+            if drop_card(&commons[ind]) { continue; }
 
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),
@@ -243,10 +274,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         }
         result = generateDeck(concatenated, colors, 20, 60);
     }
-    //println!("Deck size {:?} cards.", result.len());
     result
 }
 
+/// save cards to xml form that can be loaded from Lackey.
 pub fn to_lackey(cards: &[Card], to_deck: bool) -> String {
 
     let super_zone_name = if to_deck { "Deck" } else { "Sideboard" };
@@ -304,6 +335,7 @@ pub fn destroy_sideboard(filename: String) {
     // fs::write(filename, deck_src).expect("Unable to write file.");
 }
 
+// Load card database files.
 pub fn load_list_of_cards() -> Result<String, Box<dyn Error>>  {
     println!("Loading the card list.");
     load_from_file("ListOfCardDataFiles.txt".to_string())
@@ -316,6 +348,7 @@ pub fn load_from_file(filename: String) -> Result<String, Box<dyn Error>> {
     Ok(buffer)
 }
 
+// Load mtg cards and return hashmap, where key is set and value is the cards that belongs to the set.
 pub fn load_mtg() -> HashMap<String, Vec<CardInput>> {
 
     let card_lists: Listofcarddatafiles  = from_str(&load_list_of_cards().unwrap()).unwrap();

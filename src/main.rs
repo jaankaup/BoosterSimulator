@@ -17,13 +17,13 @@ use booster_simulator::random_deck::{Colors};
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
 
     // Top level properties than can be accessed from child elements.
-    use_shared_state_provider(cx, || Points(cx.props.points));
+    use_shared_state_provider(cx, || Points(0.0));
     use_shared_state_provider(cx, || SharedBoosters(cx.props.boosters.clone()));
 
     // Properties used are owned by this element.
     let boosters = use_state(cx, || cx.props.boosters.clone());
     let name = use_state(cx, || cx.props.deckname.clone());
-    let points_left = use_shared_state::<Points>(cx).unwrap();
+    let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
     let red_checked = use_state(cx, || false);
     let black_checked = use_state(cx, || false);
@@ -35,7 +35,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
 
     // Render.
     cx.render(rsx!(
-                  p { "Points left {(*points_left.read()).0}" }
+                  p { "Points used {(*points_used.read()).0}" }
                   p {
                       input {
                           // we tell the component what to render

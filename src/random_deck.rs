@@ -156,7 +156,6 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
         }
 
         // Check for summons cards.
-        
         if summon_cards >= min_summon_spells {  
             summons_ok = true;
         }
@@ -168,7 +167,7 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
     // artifacts_to_deck
     if tries == 100 { println!("Tried 100 times. Not enough creatures. Buy some more boosters!"); }
     else {
-        println!("{:?}", cards);
+        println!("A random Deck created ({:?} cards).", cards.len());
     }
     cards
 }

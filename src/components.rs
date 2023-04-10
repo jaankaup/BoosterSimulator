@@ -7,7 +7,7 @@ pub struct SharedBoosters(pub Vec<Booster>);
 #[allow(non_snake_case)]
 #[inline_props]
 pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -> Element {
-    let points_left = use_shared_state::<Points>(cx).unwrap();
+    let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_booster = use_shared_state::<SharedBoosters>(cx).unwrap();
 
     let name_style = r#"
@@ -57,14 +57,13 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
     let minus_val = if amount == 0 { 0 } else { 1 };
     //let minus_val = if *count.get() == 0 { 0 } else { 1 };
 
-    // How much to increase booster count whe pressing (+).
-    let inc_booster = if points_left.read().0 >= booster.price { 1 } else { 0 };
-
     // The new points_left value if (+) pressed.
-    let new_points_plus =  points_left.read().0 - inc_booster as f32 * booster.price; 
+    let new_points_plus =  points_used.read().0 + booster.price; 
+
+    let new_points_minus =  points_used.read().0 - booster.price; 
 
     // The new points_left value if (-) pressed.
-    let new_points_minus =  points_left.read().0 + minus_val as f32 * booster.price; 
+    let new_minus = if new_points_minus < 0.0 { points_used.read().0 } else { new_points_minus }; 
 
 
     cx.render(rsx!{
@@ -80,11 +79,11 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
             }
             button {
                 style: "{plus_style}",
-                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + inc_booster; points_left.write().0 = new_points_plus; }, "+",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount + 1; points_used.write().0 = new_points_plus; }, "+", // inc_booster; points_used.write().0 = new_points_plus; }, "+",
             },
             button {
                 style: "{minus_style}",
-                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount - minus_val; points_left.write().0 = new_points_minus; }, "-",
+                onclick: move |_| { ((*shared_booster.write().0)[*index]).amount = amount - minus_val; points_used.write().0 = new_minus; }, "-", // points_used.write().0 = new_points_minus; }, "-",
             },
             p {
                 style: "{count_style}",
