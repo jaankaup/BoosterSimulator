@@ -1,10 +1,10 @@
 use crate::cards::Name;
 use crate::cards::Set;
-use std::cmp;
+
 use rand::prelude::*;
-use std::mem::transmute;
+
 use std::collections::HashMap;
-use crate::cards::{CardInput, Card, cardinput_to_card};
+use crate::cards::{CardInput, Card};
 
 // const Colors = ["W", "U", "B", "G", "R"];
 
@@ -58,7 +58,7 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
                 // Card color belongs to the deck color.
                 for deck_color in &colors {
                     // We found a color match.
-                    if c == color_to_char(&deck_color) {
+                    if c == color_to_char(deck_color) {
                         found_color = true;
                         break;
                     }
@@ -77,42 +77,40 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
         }
 
         // It's not a multicolor card.
-        else {
-            if i.color.len() == 1 {
+        else if i.color.len() == 1 {
 
-                // Does the color match deck color.
-                for deck_color in colors.iter() {
-                    // We found a card with right color!
-                    if color_to_char(deck_color) == i.color.chars().nth(0).unwrap() {
-                        if cards_map.get(&deck_color).is_none() {
-                            cards_map.insert(*deck_color, Vec::new());
-                        }
-                        cards_map.get_mut(&deck_color).unwrap().push(i.clone());
-                        break;
+            // Does the color match deck color.
+            for deck_color in colors.iter() {
+                // We found a card with right color!
+                if color_to_char(deck_color) == i.color.chars().next().unwrap() {
+                    if cards_map.get(deck_color).is_none() {
+                        cards_map.insert(*deck_color, Vec::new());
                     }
+                    cards_map.get_mut(deck_color).unwrap().push(i.clone());
+                    break;
                 }
             }
-            // Artifact or land.
-            else {
-                // Get or insert!!!
-                if cards_map.get(&Colors::Colorless).is_none() {
-                    cards_map.insert(Colors::Colorless, Vec::new());
-                }
-                cards_map.get_mut(&Colors::Colorless).unwrap().push(i.clone());
-                
+        }
+        // Artifact or land.
+        else {
+            // Get or insert!!!
+            if cards_map.get(&Colors::Colorless).is_none() {
+                cards_map.insert(Colors::Colorless, Vec::new());
             }
+            cards_map.get_mut(&Colors::Colorless).unwrap().push(i.clone());
+            
         }
     }
 
     // The deck.
     let mut cards: Vec<Card> = Vec::new();
 
-    let mut artifact_count = 10;
-    let mut multicolor_count = 10;
+    let _artifact_count = 10;
+    let _multicolor_count = 10;
 
     // Rare (40%, uncommon 30%, common 30%) 
 
-    let rng = thread_rng();
+    let _rng = thread_rng();
 
     let mut summons_ok = false;
     let mut tries = 0;
@@ -146,7 +144,7 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
 
         for c in &colors {
             cards_map.entry(*c).or_insert(Vec::<CardInput>::new());
-            let color_cards = cards_map.get(&c).unwrap().clone();
+            let color_cards = cards_map.get(c).unwrap().clone();
             let mut random_color_cards = generate_cards(&color_cards, cards_per_color, deck_size, [40,30,30]);
             cards.append(&mut random_color_cards.0);
             summon_cards += random_color_cards.1;
@@ -169,13 +167,13 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
     cards
 }
 
-fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, remaining_count: u32, propabilies: [u32; 3]) -> (Vec<Card<'static>>, u32)  {
+fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_count: u32, propabilies: [u32; 3]) -> (Vec<Card<'static>>, u32)  {
 
     let mut result = Vec::<Card>::new();
 
-    let mut rares = input_cards.clone().into_iter().filter(|c| c.rarity == "R").map(|c| c.clone()).collect::<Vec<_>>();
-    let mut uncommons = input_cards.clone().into_iter().filter(|c| c.rarity == "U").map(|c| c.clone()).collect::<Vec<_>>();
-    let mut commons = input_cards.clone().into_iter().filter(|c| c.rarity == "C").map(|c| c.clone()).collect::<Vec<_>>();
+    let mut rares = input_cards.clone().into_iter().filter(|c| c.rarity == "R").collect::<Vec<_>>();
+    let mut uncommons = input_cards.clone().into_iter().filter(|c| c.rarity == "U").collect::<Vec<_>>();
+    let mut commons = input_cards.clone().into_iter().filter(|c| c.rarity == "C").collect::<Vec<_>>();
 
     let mut count = pref_count;
     let mut deck_card_count = pref_count;
@@ -186,14 +184,14 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, remaining_count
 
     let prop_rare = propabilies[0];
     let prop_uncommon = prop_rare + propabilies[1];
-    let prop_common = prop_uncommon + propabilies[2];
+    let _prop_common = prop_uncommon + propabilies[2];
 
     while count > 0 && (rares.len() + uncommons.len() + commons.len() > 0 && deck_card_count > 0 ) {
 
          let propability = rng.gen_range(0..100);
 
          // Rare
-         if propability < prop_rare && rares.len() > 0 { 
+         if propability < prop_rare && !rares.is_empty() { 
             // println!("Rare. {:?}", count);
             let index = rng.gen_range(0..rares.len());
             let the_card = rares.swap_remove(index);
@@ -212,7 +210,7 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, remaining_count
             count -= 1;
          }
          // Uncommon
-         else if propability < prop_uncommon && uncommons.len() > 0 { 
+         else if propability < prop_uncommon && !uncommons.is_empty() { 
             let index = rng.gen_range(0..uncommons.len());
             let the_card = uncommons.swap_remove(index);
 
@@ -231,7 +229,7 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, remaining_count
          }
          // Common
          else {
-            if commons.len() == 0 { continue }
+            if commons.is_empty() { continue }
             // println!("Common. {:?}", count);
             let index = rng.gen_range(0..commons.len());
             let the_card = commons.swap_remove(index);

@@ -70,7 +70,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                               if *blue_checked.get() { colors.push(Colors::Blue); }
                               if *green_checked.get() { colors.push(Colors::Green); }
                               if *white_checked.get() { colors.push(Colors::White); }
-                              if colors.len() != 0 {
+                              if !colors.is_empty() {
                                   let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
                                                                             &mut cx.props.sets.clone(),
                                                                             true,

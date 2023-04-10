@@ -1,5 +1,5 @@
 use crate::random_deck::{generateDeck, Colors};
-use std::fs;
+
 use rand::prelude::*;
 use std::borrow::Cow;
 use strong_xml::{XmlRead, XmlWrite};
@@ -311,7 +311,7 @@ pub fn to_lackey(cards: &[Card], to_deck: bool) -> String {
 pub fn destroy_sideboard(filename: String) {
 
     println!("Load file {:?}", filename);
-    let src = load_from_file(filename.to_string());
+    let src = load_from_file(filename);
     //let binding = src.unwrap().replace("\r\n\t\t", "").replace("\r\n\t", "").replace("\r\n", "");
     let binding = src.unwrap();
     //println!("{:?}", binding);
