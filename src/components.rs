@@ -60,10 +60,11 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
     // The new points_left value if (+) pressed.
     let new_points_plus =  points_used.read().0 + booster.price; 
 
-    let new_points_minus =  points_used.read().0 - booster.price; 
+    let new_points_minus =  points_used.read().0 - booster.price * minus_val as f32; 
 
     // The new points_left value if (-) pressed.
-    let new_minus = if new_points_minus < 0.0 { points_used.read().0 } else { new_points_minus }; 
+    //let new_minus = if new_points_minus < 0.0 { points_used.read().0 } else { new_points_minus }; 
+    let new_minus = new_points_minus; 
 
 
     cx.render(rsx!{
