@@ -13,6 +13,18 @@ use booster_simulator::components::{
 };
 use booster_simulator::random_deck::{Colors};
 
+const card_images_style: &str = r#"
+    margin: 5px;
+    display: flex;
+    color: red;
+    background-color: rgb(235,235, 255);
+    position: relative;
+    align-items: center;
+    border: 1px solid red;
+   "#;
+    // width: 1900px;
+    // width: fit-content;
+
 
 #[allow(non_snake_case)]
 fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
@@ -85,7 +97,6 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                                                 &card.name.id.into_owned() +
                                                                                                 ".jpg"
                                                                                                 )).collect();
-                                  println!("{:?}", deck_images);
                                   shared_deck.set(deck_images);
                                   // //let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
                                   // //                                          &mut cx.props.sets.clone(),
@@ -164,7 +175,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                       }
                   }
                   p {
-                      div {
+                      div  {
                         input {
                             r#type: "checkbox",
                             id: "white",
@@ -178,12 +189,21 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                         }
                       }
                   }
-                  boosters.iter().enumerate().map(|(i,b)|
-                      rsx!{BoosterComponent { booster: b, index: i, }}
-                  )
-                  shared_deck.iter().map(|i_file|
-                      rsx!{CardImage { image_file: i_file, }}
-                  )
+                  p {
+                    boosters.iter().enumerate().map(|(i,b)|
+                        rsx!{BoosterComponent { booster: b, index: i, }}
+                    )
+                  }
+                  p {
+                      div {
+                        style: "card_images_style",
+                        
+                        shared_deck.iter().map(|i_file|
+                            rsx!{CardImage { image_file: i_file, }}
+                            //CardImage { image_file: i_file}
+                        )
+                      }
+                  }
         ) // !rxt
     ) // render
 }

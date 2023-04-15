@@ -5,6 +5,12 @@ pub struct Points(pub f32);
 pub struct SharedBoosters(pub Vec<Booster>);
 // pub struct SharedDeckCards(pub Vec<Card>);
 
+const image_style: &str = r#"
+    padding-left: 10px;
+    width: 100px;
+    display: inline-block;
+"#;
+
 const name_style: &str = r#"
     padding-left: 10px;
     width: 400px;
@@ -98,10 +104,12 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
 
     cx.render(rsx!{
         p {
-            style: "{container_style}",
+            style: "{image_style}",
             img {
                 src: "{image_file}",
-                height: "100px",
+                width: "100px",
+                // width: "312px",
+                // height: "445px",
             }
         }
     })
