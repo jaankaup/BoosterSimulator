@@ -1,0 +1,31 @@
+# Exluce cards.
+
+[by_name]
+exact_name = ["Island",
+              "Mountain",
+              "Forest",
+              "Swamp",
+              "Plains",
+              "Snow-Covered Island",
+              "Snow-Covered Mountain",
+              "Snow-Covered Forest",
+              "Snow-Covered Swamp",
+              "Snow-Covered Plains"
+]
+
+name_contains = ["Circle of Protection"]
+
+[by_text]
+text_contains = [" ante.", "snow-covered"]
+
+## Ante cards.
+
+# Amulet of Quoz (Ice Age)
+# Bronze Tablet (Antiquities, Fourth Edition)
+# Contract from Below (Alpha, Beta, Unlimited, Revised)
+# Darkpact (Alpha, Beta, Unlimited, Revised)
+# Demonic Attorney (Alpha, Beta, Unlimited, Revised)
+# Jeweled Bird (Arabian Nights, Chronicles)
+# Rebirth (Legends, Fourth Edition)
+# Tempest Efreet (Legends, Fourth Edition)
+# Timmerian Fiends (Homelands)

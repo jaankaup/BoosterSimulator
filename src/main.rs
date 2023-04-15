@@ -170,8 +170,6 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
 
 fn main() {
 
-
-
     // Load deck informations and application settings.
     let mut f = File::open("booster_config.toml").expect("Couldn't find 'booster_config_toml'.");
     let mut buffer = String::new();

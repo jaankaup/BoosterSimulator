@@ -31,6 +31,23 @@ const deleted_text_contains: [&str; 2] =
 ];
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct ExcludeByName {
+    pub exact_name: Vec<String>,
+    pub name_contains: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct ExcludeByText {
+    pub text_contains: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct ExcludeToml {
+    pub by_name: ExcludeByName,
+    pub by_text: ExcludeByText,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct TomlConfig {
     pub file_name: String,
     pub points: u32,
@@ -152,27 +169,28 @@ pub fn cardinput_to_card(card_input: &CardInput) -> Card {
     }
 }
 
-/// A filter function. Decided if the cards should be ignored.
-fn drop_card(card: &CardInput) -> bool {
+/// A filter function. Decided if the cards should be ignored. TODO: do to_lowercase only once.
+fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Vec<String>, text_contains: &Vec<String>) -> bool {
 
     let mut drop = false;
 
     // Drop exact card names.
-    for name in deleted_names {
-        if card.card_type == name { drop = true; break; }
+    for name in exact_card_names {
+        if card.name == *name { drop = true; break; }
+        //if card.name.eq_ignore_ascii_case(name) { drop = true; break; }
     }
 
     // If the card name contains these words. 
     if !drop {
-        for text in deleted_names_contains {
-            if card.name.to_lowercase().contains(text) { drop = true; break; }
+        for text in name_contain {
+            if card.name.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
 
     }
     // If the card text contains these words. 
     if !drop {
-        for text in deleted_text_contains {
-            if card.text.to_lowercase().contains(text) { drop = true; break; }
+        for text in text_contains {
+            if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
     }
     
@@ -184,6 +202,13 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
     println!("\n");
     println!("Create boosters.");
+
+    // Load card exclude list.
+    let mut f = File::open("exclude.toml").expect("Couldn't find 'exclude.toml'.");
+    let mut buffer = String::new();
+    f.read_to_string(&mut buffer).unwrap();
+    let exclude_list: ExcludeToml = toml::from_str(&buffer).unwrap(); 
+
     let mut result = Vec::<Card>::new();
     let mut result_input_format = Vec::<CardInput>::new();
 
@@ -228,7 +253,26 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()); 
 
-            if drop_card(&rares[ind]) { continue; }
+// #[derive(Debug, Serialize, Deserialize, PartialEq)]
+// pub struct ExcludeByName {
+//     pub exact_name: Vec<String>,
+//     pub name_contains: Vec<String>,
+// }
+// 
+// #[derive(Debug, Serialize, Deserialize, PartialEq)]
+// pub struct ExcludeByText {
+//     pub text_contains: Vec<String>,
+// }
+// 
+// #[derive(Debug, Serialize, Deserialize, PartialEq)]
+// pub struct ExcludeToml {
+//     pub by_name: ExcludeByName,
+//     pub by_text: ExcludeByText,
+// }
+            if drop_card(&rares[ind],
+                         &exclude_list.by_name.exact_name,
+                         &exclude_list.by_name.name_contains,
+                         &exclude_list.by_text.text_contains) { continue; }
 
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
@@ -243,7 +287,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while uncommon_counter < uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()); 
 
-            if drop_card(&uncommons[ind]) { continue; }
+            if drop_card(&uncommons[ind],
+                         &exclude_list.by_name.exact_name,
+                         &exclude_list.by_name.name_contains,
+                         &exclude_list.by_text.text_contains) { continue; }
 
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
@@ -258,7 +305,10 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()); 
 
-            if drop_card(&commons[ind]) { continue; }
+            if drop_card(&commons[ind],
+                         &exclude_list.by_name.exact_name,
+                         &exclude_list.by_name.name_contains,
+                         &exclude_list.by_text.text_contains) { continue; }
 
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),
