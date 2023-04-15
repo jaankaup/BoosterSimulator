@@ -103,8 +103,8 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                   // //                                          &mut cx.props.sets.clone(),
                                   // //                                          true,
                                   // //                                          colors), true);
-                                  // fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
-                                  // println!("Created file '{:?}'", path);
+                                  fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                                  println!("Created file '{:?}'", path);
                               }
                               else { println!("Please choose at least one color."); }
                           },
