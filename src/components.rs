@@ -3,6 +3,7 @@ use crate::cards::Booster;
 
 pub struct Points(pub f32);
 pub struct SharedBoosters(pub Vec<Booster>);
+// pub struct SharedDeckCards(pub Vec<Card>);
 
 const name_style: &str = r#"
     padding-left: 10px;
@@ -85,6 +86,23 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
                 style: "{count_style}",
                 "{amount}"
             },
+        }
+    })
+}
+
+#[allow(non_snake_case)]
+#[inline_props]
+pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
+
+    // let deck_cards = use_shared_state::<SharedDeckCards>(cx).unwrap();
+
+    cx.render(rsx!{
+        p {
+            style: "{container_style}",
+            img {
+                src: "{image_file}",
+                height: "100px",
+            }
         }
     })
 }

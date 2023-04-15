@@ -9,6 +9,7 @@ use booster_simulator::components::{
     BoosterComponent,
     Points,
     SharedBoosters,
+    CardImage,
 };
 use booster_simulator::random_deck::{Colors};
 
@@ -25,6 +26,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     let name = use_state(cx, || cx.props.deckname.clone());
     let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
+    let shared_deck = use_state(cx, || Vec::<String>::new());
     let red_checked = use_state(cx, || false);
     let black_checked = use_state(cx, || false);
     let blue_checked = use_state(cx, || false);
@@ -71,12 +73,26 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                               if *green_checked.get() { colors.push(Colors::Green); }
                               if *white_checked.get() { colors.push(Colors::White); }
                               if !colors.is_empty() {
-                                  let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
-                                                                            &mut cx.props.sets.clone(),
-                                                                            true,
-                                                                            colors), true);
-                                  fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
-                                  println!("Created file '{:?}'", path);
+                                  let shared_b = shared_boosters_main.read().0.to_owned();
+                                  let mut sets_b = cx.props.sets.to_owned();
+                                  let deck_cards = buy_boosters(&(shared_b),
+                                                                 &mut sets_b,
+                                                                 true,
+                                                                 colors);
+                                  let lackey_filu = to_lackey(&deck_cards, true);
+                                  let deck_images: Vec<_> = deck_cards.into_iter().map(|card| ("sets/setimages/".to_owned() +
+                                                                                                &card.set.name.into_owned() + "/" + 
+                                                                                                &card.name.id.into_owned() +
+                                                                                                ".jpg"
+                                                                                                )).collect();
+                                  println!("{:?}", deck_images);
+                                  shared_deck.set(deck_images);
+                                  // //let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
+                                  // //                                          &mut cx.props.sets.clone(),
+                                  // //                                          true,
+                                  // //                                          colors), true);
+                                  // fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                                  // println!("Created file '{:?}'", path);
                               }
                               else { println!("Please choose at least one color."); }
                           },
@@ -164,8 +180,12 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                   }
                   boosters.iter().enumerate().map(|(i,b)|
                       rsx!{BoosterComponent { booster: b, index: i, }}
-                  ))
-    )
+                  )
+                  shared_deck.iter().map(|i_file|
+                      rsx!{CardImage { image_file: i_file, }}
+                  )
+        ) // !rxt
+    ) // render
 }
 
 fn main() {
