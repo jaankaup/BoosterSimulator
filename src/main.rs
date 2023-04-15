@@ -92,11 +92,12 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                  true,
                                                                  colors);
                                   let lackey_filu = to_lackey(&deck_cards, true);
-                                  let deck_images: Vec<_> = deck_cards.into_iter().map(|card| ("sets/setimages/".to_owned() +
+                                  let mut deck_images: Vec<_> = deck_cards.into_iter().map(|card| ("sets/setimages/".to_owned() +
                                                                                                 &card.set.name.into_owned() + "/" + 
                                                                                                 &card.name.id.into_owned() +
                                                                                                 ".jpg"
                                                                                                 )).collect();
+                                  deck_images.sort();
                                   shared_deck.set(deck_images);
                                   // //let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
                                   // //                                          &mut cx.props.sets.clone(),

@@ -7,7 +7,7 @@ pub struct SharedBoosters(pub Vec<Booster>);
 
 const image_style: &str = r#"
     padding-left: 10px;
-    width: 100px;
+    width: 200px;
     display: inline-block;
 "#;
 
@@ -107,7 +107,7 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
             style: "{image_style}",
             img {
                 src: "{image_file}",
-                width: "100px",
+                width: "200px",
                 // width: "312px",
                 // height: "445px",
             }
