@@ -4,9 +4,7 @@ use crate::cards::Booster;
 pub struct Points(pub f32);
 pub struct SharedBoosters(pub Vec<Booster>);
 
-// #[derive(Debug)]
 pub struct SharedImageDimension(pub (u32, u32));
-// pub struct SharedDeckCards(pub Vec<Card>);
 
 const image_hover: &str = r#"
     img:hover
@@ -127,13 +125,8 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
     // "#;
 
     let image_dimension = use_shared_state::<SharedImageDimension>(cx).unwrap();
-    let dimensions_hover = ("312px", "445px");
-    let dimensions_no_hover = ("150px", "214px");
-    //let dimensions_no_hover = ("70px", "142px");
 
-    // let deck_cards = use_shared_state::<SharedDeckCards>(cx).unwrap();
     let style_state = use_state(cx, || image_style);
-    // let image_dimension = use_state(cx, || dimensions_no_hover);
 
     cx.render(rsx!{
         p {
@@ -142,12 +135,8 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
             style: "{style_state.current()}",
             img {
                 src: "{image_file}",
-                //width: "123px",
                 width: "{image_dimension.read().0.0}px", //"150px",
-                //width: "{image_dimension.0}", //"150px",
-                //width: "{image_dimension.current().0}", //"150px",
                 height: "{image_dimension.read().0.1}px", //"150px",
-                //height: "{image_dimension.read().1}", //"150px",
             }
         }
     })

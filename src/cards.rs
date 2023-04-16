@@ -190,11 +190,9 @@ fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Ve
     // If the card text contains these words. 
     if !drop {
         for text in text_contains {
-            if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true;println!("{:?} is going to be dropped.", card);  break; }
+            if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
     }
-
-    // if drop { println!("{:?} is going to be dropped.", card); }
     
     drop
 
