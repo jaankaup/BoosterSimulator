@@ -22,8 +22,22 @@ const card_images_style: &str = r#"
     align-items: center;
     border: 1px solid red;
    "#;
-    // width: 1900px;
-    // width: fit-content;
+
+const boosters_deck_container_style: &str = r#"
+    display: flex;
+    flex_direction: row;
+    flex_wrap: wrap;
+    align_items: flex-start;
+    width: 100%;
+   "#;
+
+const style_boosters: &str = r#"
+    width: 400px;
+   "#;
+
+const style_deck_cards: &str = r#"
+    width: auto;
+   "#;
 
 
 #[allow(non_snake_case)]
@@ -50,9 +64,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                   p { "Points used {(*points_used.read()).0}" }
                   p {
                       input {
-                          // we tell the component what to render
                           value: "{name}",
-                          // and what to do when the value changes
                           oninput: move |evt| name.set(evt.value.clone()),
                       }
                   }
@@ -99,10 +111,6 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                                                 )).collect();
                                   deck_images.sort();
                                   shared_deck.set(deck_images);
-                                  // //let lackey_filu = to_lackey(&buy_boosters(&(shared_boosters_main.read().0),
-                                  // //                                          &mut cx.props.sets.clone(),
-                                  // //                                          true,
-                                  // //                                          colors), true);
                                   fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
                                   println!("Created file '{:?}'", path);
                               }
@@ -111,6 +119,9 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                           "Generate deck"
                       }
                   }
+
+                  // CHECK BOXES
+
                   p {
                       div {
                         input {
@@ -190,19 +201,31 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                         }
                       }
                   }
-                  p {
-                    boosters.iter().enumerate().map(|(i,b)|
-                        rsx!{BoosterComponent { booster: b, index: i, }}
-                    )
-                  }
-                  p {
-                      div {
-                        style: "card_images_style",
-                        
-                        shared_deck.iter().map(|i_file|
-                            rsx!{CardImage { image_file: i_file, }}
-                            //CardImage { image_file: i_file}
+
+                  // CHECKBOXES END
+
+                  // Boosters and deck container
+                  div {
+                      style: "{boosters_deck_container_style}",
+                      // Boosters
+                      p {
+                        style: "{style_boosters}",
+                        boosters.iter().enumerate().map(|(i,b)|
+                            rsx!{BoosterComponent { booster: b, index: i, }}
                         )
+                      }
+
+                      // Deck cards
+                      p {
+                        style: "{style_deck_cards}",
+                          div {
+                            style: "card_images_style",
+                            
+                            shared_deck.iter().map(|i_file|
+                                rsx!{CardImage { image_file: i_file, }}
+                                //CardImage { image_file: i_file}
+                            )
+                          }
                       }
                   }
         ) // !rxt

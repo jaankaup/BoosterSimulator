@@ -10,13 +10,15 @@ exact_name = ["Island",
               "Snow-Covered Mountain",
               "Snow-Covered Forest",
               "Snow-Covered Swamp",
-              "Snow-Covered Plains"
+              "Snow-Covered Plains",
+              "Glasses of Urza",
+              "Story Circle"
 ]
 
-name_contains = ["Circle of Protection"]
+name_contains = ["Circle of Protection", "Rune of Protection"]
 
 [by_text]
-text_contains = [" ante.", "snow-covered"]
+text_contains = [" ante.", "snow land"]
 
 ## Ante cards.
 

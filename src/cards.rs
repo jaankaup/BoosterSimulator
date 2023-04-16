@@ -190,9 +190,11 @@ fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Ve
     // If the card text contains these words. 
     if !drop {
         for text in text_contains {
-            if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
+            if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true;println!("{:?} is going to be dropped.", card);  break; }
         }
     }
+
+    // if drop { println!("{:?} is going to be dropped.", card); }
     
     drop
 
@@ -253,22 +255,6 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()); 
 
-// #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// pub struct ExcludeByName {
-//     pub exact_name: Vec<String>,
-//     pub name_contains: Vec<String>,
-// }
-// 
-// #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// pub struct ExcludeByText {
-//     pub text_contains: Vec<String>,
-// }
-// 
-// #[derive(Debug, Serialize, Deserialize, PartialEq)]
-// pub struct ExcludeToml {
-//     pub by_name: ExcludeByName,
-//     pub by_text: ExcludeByText,
-// }
             if drop_card(&rares[ind],
                          &exclude_list.by_name.exact_name,
                          &exclude_list.by_name.name_contains,
