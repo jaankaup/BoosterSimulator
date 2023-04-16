@@ -9,6 +9,7 @@ use booster_simulator::components::{
     BoosterComponent,
     Points,
     SharedBoosters,
+    SharedImageDimension,
     CardImage,
 };
 use booster_simulator::random_deck::{Colors};
@@ -46,18 +47,21 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     // Top level properties than can be accessed from child elements.
     use_shared_state_provider(cx, || Points(0.0));
     use_shared_state_provider(cx, || SharedBoosters(cx.props.boosters.clone()));
+    use_shared_state_provider(cx, || SharedImageDimension((150, 214)));
 
     // Properties used are owned by this element.
     let boosters = use_state(cx, || cx.props.boosters.clone());
     let name = use_state(cx, || cx.props.deckname.clone());
     let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
+    let shared_image_dimensions = use_shared_state::<SharedImageDimension>(cx).unwrap();
     let shared_deck = use_state(cx, || Vec::<String>::new());
     let red_checked = use_state(cx, || false);
     let black_checked = use_state(cx, || false);
     let blue_checked = use_state(cx, || false);
     let green_checked = use_state(cx, || false);
     let white_checked = use_state(cx, || false);
+    let image_dimensions_checked = use_state(cx, || false);
 
     // Render.
     cx.render(rsx!(
@@ -198,6 +202,30 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                         label {
                             r#for: "white",
                             "white"
+                        }
+                      }
+                  }
+
+                  p {
+                      div  {
+                        input {
+                            r#type: "checkbox",
+                            id: "zoom",
+                            value: "zoom",
+                            name: "zoom",
+                            onclick: move |_| { image_dimensions_checked.modify(|v| !v);
+                                                if *image_dimensions_checked.get() {
+                                                   shared_image_dimensions.write().0 = (150, 214);
+                                                }
+                                                else {
+                                                   shared_image_dimensions.write().0 = (312, 445); 
+                                                }
+
+                            },
+                        }
+                        label {
+                            r#for: "zoom",
+                            "zoom"
                         }
                       }
                   }

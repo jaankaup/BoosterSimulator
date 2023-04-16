@@ -3,7 +3,9 @@ use crate::cards::Booster;
 
 pub struct Points(pub f32);
 pub struct SharedBoosters(pub Vec<Booster>);
-pub struct SharedImageDimension(pub u32);
+
+// #[derive(Debug)]
+pub struct SharedImageDimension(pub (u32, u32));
 // pub struct SharedDeckCards(pub Vec<Card>);
 
 const image_hover: &str = r#"
@@ -70,7 +72,6 @@ pub fn BoosterComponent<'a>(cx: Scope<'a>, booster: &'a Booster, index: usize) -
     let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_booster = use_shared_state::<SharedBoosters>(cx).unwrap();
 
-
     let amount = ((*shared_booster.read().0)[*index]).amount;
 
     // How much to decrease booster count when pressing (-).
@@ -125,13 +126,14 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
     //     display: block;
     // "#;
 
+    let image_dimension = use_shared_state::<SharedImageDimension>(cx).unwrap();
     let dimensions_hover = ("312px", "445px");
     let dimensions_no_hover = ("150px", "214px");
     //let dimensions_no_hover = ("70px", "142px");
 
     // let deck_cards = use_shared_state::<SharedDeckCards>(cx).unwrap();
     let style_state = use_state(cx, || image_style);
-    let image_dimension = use_state(cx, || dimensions_no_hover);
+    // let image_dimension = use_state(cx, || dimensions_no_hover);
 
     cx.render(rsx!{
         p {
@@ -140,10 +142,12 @@ pub fn CardImage<'a>(cx: Scope<'a>, image_file: &'a String) -> Element {
             style: "{style_state.current()}",
             img {
                 src: "{image_file}",
-                //width: "90%",
-                width: "{image_dimension.current().0}", //"150px",
-                //width: "312px",
-                width: "{image_dimension.current().1}", //"150px",
+                //width: "123px",
+                width: "{image_dimension.read().0.0}px", //"150px",
+                //width: "{image_dimension.0}", //"150px",
+                //width: "{image_dimension.current().0}", //"150px",
+                height: "{image_dimension.read().0.1}px", //"150px",
+                //height: "{image_dimension.read().1}", //"150px",
             }
         }
     })
