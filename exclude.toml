@@ -12,14 +12,115 @@ exact_name = ["Island",
               "Snow-Covered Swamp",
               "Snow-Covered Plains",
               "Glasses of Urza",
-              "Story Circle"
+              "Story Circle",
+              "Greater Realm of Preservation",
+              "Goblin Game",
+              "Apocalypse Chime"
 ]
-
 name_contains = ["Circle of Protection", "Rune of Protection"]
 
 [by_text]
 text_contains = [" ante.", "snow land"]
 
+### Exclude card if deck contains color ###
+[[exclude_color_contains]]
+name = "Flashfires"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Conversion"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Strench of Evil"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Anarchy"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Virtue's Ruin"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Tsunami"
+color = "U"
+
+[[exclude_color_contains]]
+name = "Magnetic Mountain"
+color = "U"
+
+[[exclude_color_contains]]
+name = "Acid Rain"
+color = "G"
+
+[[exclude_color_contains]]
+name = "Perish"
+color = "G"
+
+[[exclude_color_contains]]
+name = "Nature's Ruin"
+color = "G"
+
+[[exclude_color_contains]]
+name = "Reign of Terror"
+color = "WG"
+
+[[exclude_color_contains]]
+name = "Irini Sengir"
+color = "WG"
+
+[[exclude_color_contains]]
+name = "Gloom"
+color = "B"
+
+[[exclude_color_contains]]
+name = "Karma"
+color = "B"
+
+[[exclude_color_contains]]
+name = "Drought"
+color = "B"
+
+### Require color or exclude ###
+[[exclude_color_required]]
+name = "Soul Burn"
+color = "RB"
+
+[[exclude_color_required]]
+name = "Sunglasses of Urza"
+color = "RW"
+
+[[exclude_color_required]]
+name = "Kormus Bell"
+color = "B"
+
+
+# [by_name]
+# exact_name = [\"Kortti blaah, Paha kortti\"]
+# name_contains = [\"Kortti joka on\", \"Joop\"]
+# 
+# [by_text]
+# text_contains = [\"Kielleettya tekstia 1\", \"Kiellettya tekstia 2\"]
+# 
+# [[exclude_color_contains]]
+# name = \"Nimmi\"
+# color = \"GR\"
+# 
+# [[exclude_color_contains]]
+# name = \"Nimmi2\"
+# color = \"BU\"
+# 
+# [[exclude_color_required]]
+# name = \"Hekotus\"
+# color = \"B\"
+# 
+# [[exclude_color_required]]
+# name = \"Hekotus2\"
+# color = \"R\"\n")
+# 
+# 
 ## Ante cards.
 
 # Amulet of Quoz (Ice Age)

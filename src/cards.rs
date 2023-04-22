@@ -1,4 +1,4 @@
-use crate::random_deck::{generateDeck, Colors};
+use crate::random_deck::{generateDeck, Colors, color_to_char};
 
 use rand::prelude::*;
 use std::borrow::Cow;
@@ -42,9 +42,23 @@ pub struct ExcludeByText {
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct ExcludeByColor {
+    pub name: String,
+    pub color: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
+pub struct RequireColor {
+    pub name: String,
+    pub color: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct ExcludeToml {
     pub by_name: ExcludeByName,
     pub by_text: ExcludeByText,
+    pub exclude_color_contains: Vec<ExcludeByColor>,
+    pub exclude_color_required: Vec<RequireColor>,
 }
 
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
@@ -161,6 +175,15 @@ pub struct CardName {
     name: String, 
 }
 
+pub fn example_exclude_toml() -> ExcludeToml {
+    ExcludeToml {
+        by_name: ExcludeByName { exact_name: vec!["Kortti blaah, Paha kortti".to_string()], name_contains: vec!["Kortti joka on".to_string(), "Joop".to_string()] },
+        by_text: ExcludeByText { text_contains: vec!["Kielleettya tekstia 1".to_string(), "Kiellettya tekstia 2".to_string()] },
+        exclude_color_contains: vec![ExcludeByColor { name: "Nimmi".to_string(), color: "GR".to_string()}, ExcludeByColor { name: "Nimmi2".to_string(), color: "BU".to_string()} ],
+        exclude_color_required: vec![RequireColor { name: "Hekotus".to_string(), color: "B".to_string(), }, RequireColor { name: "Hekotus2".to_string(), color: "R".to_string(), }],
+    }
+}
+
 pub fn cardinput_to_card(card_input: &CardInput) -> Card {
 
     Card { name: Name {id: card_input.imagefile.clone().into(),
@@ -170,36 +193,80 @@ pub fn cardinput_to_card(card_input: &CardInput) -> Card {
 }
 
 /// A filter function. Decided if the cards should be ignored. TODO: do to_lowercase only once.
-fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Vec<String>, text_contains: &Vec<String>) -> bool {
+//fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Vec<String>, text_contains: &Vec<String>) -> bool {
+fn drop_card(card: &CardInput, exclude_list: &ExcludeToml, deck_colors: &Vec<Colors>) -> bool {
 
     let mut drop = false;
+    let card_name = card.name.to_lowercase().to_owned();
 
     // Drop exact card names.
-    for name in exact_card_names {
+    for name in &exclude_list.by_name.exact_name {
         if card.name == *name { drop = true; break; }
         //if card.name.eq_ignore_ascii_case(name) { drop = true; break; }
     }
 
     // If the card name contains these words. 
     if !drop {
-        for text in name_contain {
+        for text in &exclude_list.by_name.name_contains {
             if card.name.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
 
     }
     // If the card text contains these words. 
     if !drop {
-        for text in text_contains {
+        for text in &exclude_list.by_text.text_contains {
             if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
     }
+    // If deck contains a specific color. 
+    if !drop {
+
+        // Do the name exists on the exlude list.
+        if let Some(name_found) = exclude_list.exclude_color_contains.iter().find(|&x| x.name.to_lowercase() == card_name) {
+            for i in card.color.chars() {
+                for j in deck_colors.iter() {
+                    if i == color_to_char(j) {
+                        println!("{:?} == {:?}", i, color_to_char(j));
+                        drop = true;
+                        break;
+                    }
+                }
+                if drop { println!("{:?} dropped", card); break; }
+                
+            }
+        };
+    }
+
+    // The deck must contain same colors than the card, or discard.
+    if let Some(name_found) = exclude_list.exclude_color_required.iter().find(|&x| x.name.to_lowercase() == card_name) {
+        let deck_colors_char = deck_colors.iter().map(|x| color_to_char(x)).collect::<Vec<_>>();
+        for i in name_found.color.chars() {
+            if !deck_colors_char.contains(&i) {
+                drop = true;
+                println!("{:?} dropped", card);
+                break;
+            }
+            // bool stop = false;
+            // for j in card.color.chars() {
+            //     if card.color.chars.contains(|&x|
+            //     if i == color_to_char(j) {
+            //         println!("{:?} == {:?}", i, color_to_char(j));
+            //         drop = true;
+            //         break;
+            //     }
+            // }
+            // if drop { println!("{:?} dropped", card); break; }
+        }
+    };
+
+    // Must contain colors or discard.
     
     drop
 
 }
  
 pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
-
+    println!("{:?}", toml::to_string(&example_exclude_toml()));
     println!("\n");
     println!("Create boosters.");
 
@@ -253,10 +320,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()); 
 
-            if drop_card(&rares[ind],
-                         &exclude_list.by_name.exact_name,
-                         &exclude_list.by_name.name_contains,
-                         &exclude_list.by_text.text_contains) { continue; }
+            // if drop_card(&rares[ind],
+            //              &exclude_list.by_name.exact_name,
+            //              &exclude_list.by_name.name_contains,
+            //              &exclude_list.by_text.text_contains) { continue; }
+            if drop_card(&rares[ind], &exclude_list, &colors) { continue; }
 
             result.push(
                 Card { name: Name {id: rares[ind].imagefile.clone().into(),
@@ -271,10 +339,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while uncommon_counter < uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()); 
 
-            if drop_card(&uncommons[ind],
-                         &exclude_list.by_name.exact_name,
-                         &exclude_list.by_name.name_contains,
-                         &exclude_list.by_text.text_contains) { continue; }
+            if drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
+            // if drop_card(&uncommons[ind],
+            //              &exclude_list.by_name.exact_name,
+            //              &exclude_list.by_name.name_contains,
+            //              &exclude_list.by_text.text_contains) { continue; }
 
             result.push(
                 Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
@@ -289,10 +358,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()); 
 
-            if drop_card(&commons[ind],
-                         &exclude_list.by_name.exact_name,
-                         &exclude_list.by_name.name_contains,
-                         &exclude_list.by_text.text_contains) { continue; }
+            if drop_card(&commons[ind], &exclude_list, &colors) { continue; }
+            //if drop_card(&commons[ind],
+            //             &exclude_list.by_name.exact_name,
+            //             &exclude_list.by_name.name_contains,
+            //             &exclude_list.by_text.text_contains) { continue; }
 
             result.push(
                 Card { name: Name {id: commons[ind].imagefile.clone().into(),

@@ -19,7 +19,7 @@ pub enum Colors {
     Multicolor,
 }
 
-fn color_to_char(color: &Colors) -> char {
+pub fn color_to_char(color: &Colors) -> char {
     match color {
         Colors::Red => 'R',
         Colors::Black => 'B',
