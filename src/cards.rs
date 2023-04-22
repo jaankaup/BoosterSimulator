@@ -193,7 +193,6 @@ pub fn cardinput_to_card(card_input: &CardInput) -> Card {
 }
 
 /// A filter function. Decided if the cards should be ignored. TODO: do to_lowercase only once.
-//fn drop_card(card: &CardInput, exact_card_names: &Vec<String>, name_contain: &Vec<String>, text_contains: &Vec<String>) -> bool {
 fn drop_card(card: &CardInput, exclude_list: &ExcludeToml, deck_colors: &Vec<Colors>) -> bool {
 
     let mut drop = false;
@@ -218,48 +217,39 @@ fn drop_card(card: &CardInput, exclude_list: &ExcludeToml, deck_colors: &Vec<Col
             if card.text.to_lowercase().contains(&text.to_lowercase()) { drop = true; break; }
         }
     }
-    // If deck contains a specific color. 
-    if !drop {
 
-        // Do the name exists on the exlude list.
-        if let Some(name_found) = exclude_list.exclude_color_contains.iter().find(|&x| x.name.to_lowercase() == card_name) {
-            for i in card.color.chars() {
-                for j in deck_colors.iter() {
-                    if i == color_to_char(j) {
-                        println!("{:?} == {:?}", i, color_to_char(j));
-                        drop = true;
-                        break;
+    if deck_colors.len() > 0 {
+        // If deck contains a specific color. 
+        if !drop {
+
+            // Do the name exists on the exlude list.
+            if let Some(name_found) = exclude_list.exclude_color_contains.iter().find(|&x| x.name.to_lowercase() == card_name) {
+                for i in name_found.color.chars() {
+                    for j in deck_colors.iter() {
+                        if i == color_to_char(j) {
+                            println!("{:?} == {:?}", i, color_to_char(j));
+                            drop = true;
+                            break;
+                        }
                     }
+                    if drop { println!("{:?} dropped", card); break; }
+                    
                 }
-                if drop { println!("{:?} dropped", card); break; }
-                
+            };
+        }
+
+        // The deck must contain same colors than the card, or discard.
+        if let Some(name_found) = exclude_list.exclude_color_required.iter().find(|&x| x.name.to_lowercase() == card_name) {
+            let deck_colors_char = deck_colors.iter().map(|x| color_to_char(x)).collect::<Vec<_>>();
+            for i in name_found.color.chars() {
+                if !deck_colors_char.contains(&i) {
+                    drop = true;
+                    println!("{:?} dropped", card);
+                    break;
+                }
             }
         };
     }
-
-    // The deck must contain same colors than the card, or discard.
-    if let Some(name_found) = exclude_list.exclude_color_required.iter().find(|&x| x.name.to_lowercase() == card_name) {
-        let deck_colors_char = deck_colors.iter().map(|x| color_to_char(x)).collect::<Vec<_>>();
-        for i in name_found.color.chars() {
-            if !deck_colors_char.contains(&i) {
-                drop = true;
-                println!("{:?} dropped", card);
-                break;
-            }
-            // bool stop = false;
-            // for j in card.color.chars() {
-            //     if card.color.chars.contains(|&x|
-            //     if i == color_to_char(j) {
-            //         println!("{:?} == {:?}", i, color_to_char(j));
-            //         drop = true;
-            //         break;
-            //     }
-            // }
-            // if drop { println!("{:?} dropped", card); break; }
-        }
-    };
-
-    // Must contain colors or discard.
     
     drop
 

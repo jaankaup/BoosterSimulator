@@ -92,43 +92,6 @@ color = "RB"
 name = "Sunglasses of Urza"
 color = "RW"
 
-[[exclude_color_required]]
-name = "Kormus Bell"
-color = "B"
-
-
-# [by_name]
-# exact_name = [\"Kortti blaah, Paha kortti\"]
-# name_contains = [\"Kortti joka on\", \"Joop\"]
-# 
-# [by_text]
-# text_contains = [\"Kielleettya tekstia 1\", \"Kiellettya tekstia 2\"]
-# 
-# [[exclude_color_contains]]
-# name = \"Nimmi\"
-# color = \"GR\"
-# 
-# [[exclude_color_contains]]
-# name = \"Nimmi2\"
-# color = \"BU\"
-# 
 # [[exclude_color_required]]
-# name = \"Hekotus\"
-# color = \"B\"
-# 
-# [[exclude_color_required]]
-# name = \"Hekotus2\"
-# color = \"R\"\n")
-# 
-# 
-## Ante cards.
-
-# Amulet of Quoz (Ice Age)
-# Bronze Tablet (Antiquities, Fourth Edition)
-# Contract from Below (Alpha, Beta, Unlimited, Revised)
-# Darkpact (Alpha, Beta, Unlimited, Revised)
-# Demonic Attorney (Alpha, Beta, Unlimited, Revised)
-# Jeweled Bird (Arabian Nights, Chronicles)
-# Rebirth (Legends, Fourth Edition)
-# Tempest Efreet (Legends, Fourth Edition)
-# Timmerian Fiends (Homelands)
+# name = "Kormus Bell"
+# color = "B"
