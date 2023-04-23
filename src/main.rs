@@ -139,7 +139,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                               if !colors.is_empty() {
                                   let shared_b = shared_boosters_main.read().0.to_owned();
                                   let mut sets_b = cx.props.sets.to_owned();
-                                  let deck_cards = buy_boosters(&shared_b,
+                                  let mut deck_cards = buy_boosters(&shared_b,
                                                                 &mut sets_b,
                                                                 true,
                                                                 colors);
@@ -159,12 +159,14 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                    // let new_deck_cards = deck_cards.iter().map(|x| x.to_owned()).collect::<Vec<_>>();
                                    //random_cards.with_mut(|x| *x = joopajoo);
                                    //random_cards.set(input_cards);
+                                   deck_cards.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap()); 
+                                   deck_cards.sort_by(|a, b| a.color.partial_cmp(&b.color).unwrap()); 
                                    let mut deck_images: Vec<_> = deck_cards.clone().into_iter().map(|card| ("sets/setimages/".to_owned() +
                                                                                                 &card.set.to_owned() + "/" + 
                                                                                                 &card.imagefile.to_owned() +
                                                                                                 ".jpg"
                                                                                                 )).collect();
-                                  deck_images.sort();
+                                  //deck_images.sort();
                                   shared_deck.set(deck_images);
 
                                   random_cards.set(deck_cards.clone());
