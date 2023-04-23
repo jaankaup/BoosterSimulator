@@ -12,24 +12,6 @@ use std::io::prelude::*;
 use std::error::Error;
 use std::collections::HashMap;
 
-const deleted_names: [&str; 6] =
-    ["Basic Land - Swamp",
-     "Basic Land - Plains", 
-     "Basic Land - Swamp",
-     "Basic Land - Forest",
-     "Basic Land - Island",
-     "Basic Land - Mountain"
-];
-
-const deleted_names_contains: [&str; 1] =
-    ["snow-covered"
-];
-
-const deleted_text_contains: [&str; 2] =
-    ["snow-covered",
-     " ante.",
-];
-
 #[derive(Debug, Serialize, Deserialize, PartialEq)]
 pub struct ExcludeByName {
     pub exact_name: Vec<String>,
@@ -226,7 +208,7 @@ fn drop_card(card: &CardInput, exclude_list: &ExcludeToml, deck_colors: &Vec<Col
                 for i in name_found.color.chars() {
                     for j in deck_colors.iter() {
                         if i == color_to_char(j) {
-                            println!("{:?} == {:?}", i, color_to_char(j));
+                            // println!("{:?} == {:?}", i, color_to_char(j));
                             drop = true;
                             break;
                         }
