@@ -38,7 +38,7 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
                     colors: Vec<Colors>,
                     //colors: &'a Vec<Colors>,
                     min_summon_spells: u32,
-                    deck_size: u32) -> Vec<Card<'a>> {
+                    deck_size: u32) -> Vec<CardInput> {
 
     // Hash.
     let mut cards_map: HashMap<Colors, Vec<CardInput>> = HashMap::new();
@@ -103,7 +103,7 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
     }
 
     // The deck.
-    let mut cards: Vec<Card> = Vec::new();
+    let mut cards: Vec<CardInput> = Vec::new();
 
     let _artifact_count = 10;
     let _multicolor_count = 10;
@@ -167,9 +167,9 @@ pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
     cards
 }
 
-fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_count: u32, propabilies: [u32; 3]) -> (Vec<Card<'static>>, u32)  {
+fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_count: u32, propabilies: [u32; 3]) -> (Vec<CardInput>, u32)  {
 
-    let mut result = Vec::<Card>::new();
+    let mut result = Vec::<CardInput>::new();
 
     let mut rares = input_cards.clone().into_iter().filter(|c| c.rarity == "R").collect::<Vec<_>>();
     let mut uncommons = input_cards.clone().into_iter().filter(|c| c.rarity == "U").collect::<Vec<_>>();
@@ -201,11 +201,12 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
 
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            result.push(
-                    Card { name: Name {id: the_card.imagefile.clone().into(),
-                    name: the_card.name.clone().into()},
-                    set: Set { name: the_card.set.clone().into()},
-                    });
+            // result.push(
+            //         Card { name: Name {id: the_card.imagefile.clone().into(),
+            //         name: the_card.name.clone().into()},
+            //         set: Set { name: the_card.set.clone().into()},
+            //         });
+            result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;
          }
@@ -219,11 +220,12 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
 
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            result.push(
-                    Card { name: Name {id: the_card.imagefile.clone().into(),
-                    name: the_card.name.clone().into()},
-                    set: Set { name: the_card.set.clone().into()},
-                    });
+            //jresult.push(
+            //j        Card { name: Name {id: the_card.imagefile.clone().into(),
+            //j        name: the_card.name.clone().into()},
+            //j        set: Set { name: the_card.set.clone().into()},
+            //j        });
+            result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;
          }
@@ -239,11 +241,12 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
 
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            result.push(
-                    Card { name: Name {id: the_card.imagefile.clone().into(),
-                    name: the_card.name.clone().into()},
-                    set: Set { name: the_card.set.clone().into()},
-                    });
+            // result.push(
+            //         Card { name: Name {id: the_card.imagefile.clone().into(),
+            //         name: the_card.name.clone().into()},
+            //         set: Set { name: the_card.set.clone().into()},
+            //         });
+            result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;
          }

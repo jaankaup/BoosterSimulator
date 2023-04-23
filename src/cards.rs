@@ -168,9 +168,9 @@ pub struct CardName {
 
 pub fn cardinput_to_card(card_input: &CardInput) -> Card {
 
-    Card { name: Name {id: card_input.imagefile.clone().into(),
-                       name: card_input.name.clone().into()},
-           set: Set { name: card_input.set.clone().into()},
+    Card { name: Name {id: card_input.imagefile.to_owned().into(),
+                       name: card_input.name.to_owned().into()},
+           set: Set { name: card_input.set.to_owned().into()},
     }
 }
 
@@ -232,12 +232,11 @@ fn drop_card(card: &CardInput, exclude_list: &ExcludeToml, deck_colors: &Vec<Col
             }
         };
     }
-    
     drop
-
 }
  
-pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
+//pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<Card<'a>> {
+pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String, Vec<CardInput>>, random_deck: bool, colors: Vec<Colors>) -> Vec<CardInput> {
     // println!("{:?}", toml::to_string(&example_exclude_toml()));
     println!("\n");
     println!("Create boosters.");
@@ -248,7 +247,7 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
     f.read_to_string(&mut buffer).unwrap();
     let exclude_list: ExcludeToml = toml::from_str(&buffer).unwrap(); 
 
-    let mut result = Vec::<Card>::new();
+    let mut result = Vec::<CardInput>::new();
     let mut result_input_format = Vec::<CardInput>::new();
 
     for booster in boosters {
@@ -270,13 +269,13 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
         for i in the_set.iter() {
             if i.rarity.eq(&rare) {
-               rares.push(i.clone());
+               rares.push(i.to_owned());
             }
             else if i.rarity.eq(&unc) {
-               uncommons.push(i.clone());
+               uncommons.push(i.to_owned());
             }
             else if i.rarity.eq(&com) {
-               commons.push(i.clone());
+               commons.push(i.to_owned());
             }
         }
 
@@ -294,11 +293,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
             if drop_card(&rares[ind], &exclude_list, &colors) { continue; }
 
-            result.push(
-                Card { name: Name {id: rares[ind].imagefile.clone().into(),
-                                   name: rares[ind].name.clone().into()},
-                       set: Set { name: rares[ind].set.clone().into()},
-                });
+            // result.push(
+            //     Card { name: Name {id: rares[ind].imagefile.clone().into(),
+            //                        name: rares[ind].name.clone().into()},
+            //            set: Set { name: rares[ind].set.clone().into()},
+            //     });
             result_input_format.push(rares[ind].clone());
 
             rare_counter += 1;
@@ -309,11 +308,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
             if drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
 
-            result.push(
-                Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
-                                   name: uncommons[ind].name.clone().into()},
-                       set: Set { name: uncommons[ind].set.clone().into()},
-                });
+            // result.push(
+            //     Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
+            //                        name: uncommons[ind].name.clone().into()},
+            //            set: Set { name: uncommons[ind].set.clone().into()},
+            //     });
 
             result_input_format.push(uncommons[ind].clone());
             uncommon_counter += 1;
@@ -324,11 +323,11 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
             if drop_card(&commons[ind], &exclude_list, &colors) { continue; }
 
-            result.push(
-                Card { name: Name {id: commons[ind].imagefile.clone().into(),
-                                   name: commons[ind].name.clone().into()},
-                       set: Set { name: commons[ind].set.clone().into()},
-                });
+            //result.push(
+            //    Card { name: Name {id: commons[ind].imagefile.clone().into(),
+            //                       name: commons[ind].name.clone().into()},
+            //           set: Set { name: commons[ind].set.clone().into()},
+            //    });
 
             result_input_format.push(commons[ind].clone());
             common_counter += 1;
@@ -341,6 +340,16 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         }
         result = generateDeck(concatenated, colors, 20, 60);
     }
+    result
+}
+
+pub fn convert_cardinput(card_input: &Vec<CardInput>) -> Vec<Card> {
+
+    let mut result = card_input.iter().map(|x|
+        Card { name: Name {id: x.imagefile.clone().into(),
+               name: x.name.clone().into()},
+               set: Set { name: x.set.clone().into()}
+        }).collect::<Vec<_>>();
     result
 }
 

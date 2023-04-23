@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use booster_simulator::booster_list::AppStateProps;
 use dioxus_desktop::Config;
 use std::io::Read;
@@ -77,7 +78,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     // Properties used are owned by this element.
     let boosters = use_state(cx, || cx.props.boosters.clone());
     let name = use_state(cx, || cx.props.deckname.clone());
-    let random_cards = use_state(cx, || Vec::<Card>::new());
+    let random_cards = use_state(cx, || Vec::<CardInput>::new());
     let points_used = use_shared_state::<Points>(cx).unwrap();
     let shared_boosters_main = use_shared_state::<SharedBoosters>(cx).unwrap();
     let shared_image_dimensions = use_shared_state::<SharedImageDimension>(cx).unwrap();
@@ -97,23 +98,26 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                   style: "{header_style}",
                   p { style:"{points_used_style}",  "Points used {(*points_used.read()).0}" }
                   p { input { value: "{name}", oninput: move |evt| name.set(evt.value.clone()), } }
-                  // p {
-                  //     button {
-                  //         onclick: move |_| {
-                  //                                                    
-                  //             let mut path = "decks/".to_string();
-                  //             path.push_str(name.get());
-                  //         },
-                  //         "Save deck"
-                  //     }
-                  // }
+                  p {
+                      button {
+                          onclick: move |_| {
+                                                                     
+                            let mut path = "decks/".to_string();
+                            path.push_str(name.get());
+                            let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), true);
+                            fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                            println!("Created file '{:?}'", path);
+                          },
+                          "Save deck"
+                      }
+                  }
                   p {
                       button {
                           onclick: move |_| {
                                                                      
                               let mut path = "decks/".to_string();
                               path.push_str(name.get());
-                              let lackey_filu = to_lackey(random_cards.get().as_slice(), true);
+                              let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), true);
                               fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
                               println!("Created file '{:?}'", path);
                           },
@@ -124,8 +128,8 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                       button {
                           onclick: move |_| {
                                                                      
-                              let mut path = "decks/".to_string();
-                              path.push_str(name.get());
+                              // let mut path = "decks/".to_string();
+                              //path.push_str(name.get());
                               let mut colors = Vec::<Colors>::new();
                               if *red_checked.get() { colors.push(Colors::Red); }
                               if *black_checked.get() { colors.push(Colors::Black); }
@@ -135,13 +139,14 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                               if !colors.is_empty() {
                                   let shared_b = shared_boosters_main.read().0.to_owned();
                                   let mut sets_b = cx.props.sets.to_owned();
-                                  let deck_cards = buy_boosters(&(shared_b),
-                                                                 &mut sets_b,
-                                                                 true,
-                                                                 colors);
-                                   // let mut input_cards = Vec::<CardInput>::new();
+                                  let deck_cards = buy_boosters(&shared_b,
+                                                                &mut sets_b,
+                                                                true,
+                                                                colors);
+                                  //let deck_cards2 = deck_cards.clone();
+                                  //let mut input_cards = Vec::<CardInput>::new();
                                    // // TODO: avoid cloning
-                                   // let mut sets_c = cx.props.sets.to_owned();
+                                   // let mut sets_c: HashMap<String, Vec<CardInput>> = sets_b.clone().into();
                                    // for x in sets_c.values_mut() {
                                    //     //random_cards.modify(|random_c| random_c.append(x)); //.append(x);
                                    //     input_cards.append(x);
@@ -155,16 +160,18 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                    //random_cards.with_mut(|x| *x = joopajoo);
                                    //random_cards.set(input_cards);
                                    let mut deck_images: Vec<_> = deck_cards.clone().into_iter().map(|card| ("sets/setimages/".to_owned() +
-                                                                                                &card.set.name.into_owned() + "/" + 
-                                                                                                &card.name.id.into_owned() +
+                                                                                                &card.set.to_owned() + "/" + 
+                                                                                                &card.imagefile.to_owned() +
                                                                                                 ".jpg"
                                                                                                 )).collect();
                                   deck_images.sort();
                                   shared_deck.set(deck_images);
 
-                                  let lackey_filu = to_lackey(&deck_cards, true);
-                                  fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
-                                  println!("Created file '{:?}'", path);
+                                  random_cards.set(deck_cards.clone());
+
+                                  // let lackey_filu = to_lackey(&convert_cardinput(&deck_cards), true);
+                                  // fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                                  // println!("Created file '{:?}'", path);
                               }
                               else { println!("Please choose at least one color."); }
                           },
