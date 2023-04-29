@@ -6,8 +6,6 @@ use rand::prelude::*;
 use std::collections::HashMap;
 use crate::cards::{CardInput, Card};
 
-// const Colors = ["W", "U", "B", "G", "R"];
-
 #[derive(Eq, Hash, PartialEq, Debug, Copy, Clone)]
 pub enum Colors {
     Red,
@@ -30,8 +28,6 @@ pub fn color_to_char(color: &Colors) -> char {
         Colors::Multicolor => panic!("Multicolor has no char value"),
     }
 }
-
-// const ColorChar: [char; 5] = ['R', 'B', 'U', 'W', 'G'];  
 
 //pub fn generateDeck<'a>(input_cards: &'a Vec<CardInput>,
 pub fn generateDeck<'a>(input_cards: Vec<CardInput>,
@@ -192,20 +188,11 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
 
          // Rare
          if propability < prop_rare && !rares.is_empty() { 
-            // println!("Rare. {:?}", count);
             let index = rng.gen_range(0..rares.len());
             let the_card = rares.swap_remove(index);
 
-            // Skip ante cards.
-            if the_card.text.to_lowercase().contains("ante") { continue; }
-
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            // result.push(
-            //         Card { name: Name {id: the_card.imagefile.clone().into(),
-            //         name: the_card.name.clone().into()},
-            //         set: Set { name: the_card.set.clone().into()},
-            //         });
             result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;
@@ -215,16 +202,8 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
             let index = rng.gen_range(0..uncommons.len());
             let the_card = uncommons.swap_remove(index);
 
-            // Skip ante cards.
-            if the_card.text.to_lowercase().contains("ante") { continue; }
-
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            //jresult.push(
-            //j        Card { name: Name {id: the_card.imagefile.clone().into(),
-            //j        name: the_card.name.clone().into()},
-            //j        set: Set { name: the_card.set.clone().into()},
-            //j        });
             result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;
@@ -232,20 +211,11 @@ fn generate_cards(input_cards: &Vec<CardInput>, pref_count: u32, _remaining_coun
          // Common
          else {
             if commons.is_empty() { continue }
-            // println!("Common. {:?}", count);
             let index = rng.gen_range(0..commons.len());
             let the_card = commons.swap_remove(index);
 
-            // Skip ante cards.
-            if the_card.text.to_lowercase().contains("ante") { continue; }
-
             if the_card.card_type.to_lowercase().contains("creature") { summon_cards += 1; }
 
-            // result.push(
-            //         Card { name: Name {id: the_card.imagefile.clone().into(),
-            //         name: the_card.name.clone().into()},
-            //         set: Set { name: the_card.set.clone().into()},
-            //         });
             result.push(the_card); // to_owned?
             deck_card_count -= 1;
             count -= 1;

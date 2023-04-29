@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use booster_simulator::booster_list::AppStateProps;
 use dioxus_desktop::Config;
 use std::io::Read;
@@ -143,37 +142,19 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                 &mut sets_b,
                                                                 true,
                                                                 colors);
-                                  //let deck_cards2 = deck_cards.clone();
-                                  //let mut input_cards = Vec::<CardInput>::new();
-                                   // // TODO: avoid cloning
-                                   // let mut sets_c: HashMap<String, Vec<CardInput>> = sets_b.clone().into();
-                                   // for x in sets_c.values_mut() {
-                                   //     //random_cards.modify(|random_c| random_c.append(x)); //.append(x);
-                                   //     input_cards.append(x);
-                                   // }
-                                   // let mut joopajoo = Vec::<Card>::new();
-                                   // for x in deck_cards.iter() {
-                                   //     joopajoo.push(x.clone());
-                                   // }
-                                   //let copied_deck_cards = deck_cards.to_owned();
-                                   // let new_deck_cards = deck_cards.iter().map(|x| x.to_owned()).collect::<Vec<_>>();
-                                   //random_cards.with_mut(|x| *x = joopajoo);
-                                   //random_cards.set(input_cards);
-                                   deck_cards.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap()); 
-                                   deck_cards.sort_by(|a, b| a.color.partial_cmp(&b.color).unwrap()); 
-                                   let mut deck_images: Vec<_> = deck_cards.clone().into_iter().map(|card| ("sets/setimages/".to_owned() +
-                                                                                                &card.set.to_owned() + "/" + 
-                                                                                                &card.imagefile.to_owned() +
-                                                                                                ".jpg"
-                                                                                                )).collect();
+                                  // Sort cards.
+                                  deck_cards.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap()); 
+                                  deck_cards.sort_by(|a, b| a.color.partial_cmp(&b.color).unwrap()); 
+                                  let deck_images: Vec<_> = deck_cards.clone().into_iter().map(|card| ("sets/setimages/".to_owned() +
+                                                                                               &card.set.to_owned() + "/" + 
+                                                                                               &card.imagefile.to_owned() +
+                                                                                               ".jpg"
+                                                                                               )).collect();
                                   //deck_images.sort();
                                   shared_deck.set(deck_images);
 
                                   random_cards.set(deck_cards.clone());
 
-                                  // let lackey_filu = to_lackey(&convert_cardinput(&deck_cards), true);
-                                  // fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
-                                  // println!("Created file '{:?}'", path);
                               }
                               else { println!("Please choose at least one color."); }
                           },

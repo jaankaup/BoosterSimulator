@@ -293,11 +293,6 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
             if drop_card(&rares[ind], &exclude_list, &colors) { continue; }
 
-            // result.push(
-            //     Card { name: Name {id: rares[ind].imagefile.clone().into(),
-            //                        name: rares[ind].name.clone().into()},
-            //            set: Set { name: rares[ind].set.clone().into()},
-            //     });
             result_input_format.push(rares[ind].clone());
 
             rare_counter += 1;
@@ -308,12 +303,6 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
 
             if drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
 
-            // result.push(
-            //     Card { name: Name {id: uncommons[ind].imagefile.clone().into(),
-            //                        name: uncommons[ind].name.clone().into()},
-            //            set: Set { name: uncommons[ind].set.clone().into()},
-            //     });
-
             result_input_format.push(uncommons[ind].clone());
             uncommon_counter += 1;
         }
@@ -322,12 +311,6 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
             let ind = rng.gen_range(0..commons.len()); 
 
             if drop_card(&commons[ind], &exclude_list, &colors) { continue; }
-
-            //result.push(
-            //    Card { name: Name {id: commons[ind].imagefile.clone().into(),
-            //                       name: commons[ind].name.clone().into()},
-            //           set: Set { name: commons[ind].set.clone().into()},
-            //    });
 
             result_input_format.push(commons[ind].clone());
             common_counter += 1;
@@ -385,9 +368,7 @@ pub fn destroy_sideboard(filename: String) {
 
     println!("Load file {:?}", filename);
     let src = load_from_file(filename);
-    //let binding = src.unwrap().replace("\r\n\t\t", "").replace("\r\n\t", "").replace("\r\n", "");
     let binding = src.unwrap();
-    //println!("{:?}", binding);
     let deck = Deck::from_str(&binding).unwrap();
     println!("{:?}", deck);
 
