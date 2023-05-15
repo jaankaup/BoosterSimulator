@@ -88,6 +88,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
     let green_checked = use_state(cx, || false);
     let white_checked = use_state(cx, || false);
     let image_dimensions_checked = use_state(cx, || false);
+    let toDeck = use_state(cx, || true);
 
     // Render.
     cx.render(rsx!(
@@ -103,7 +104,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                                                      
                             let mut path = "decks/".to_string();
                             path.push_str(name.get());
-                            let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), true);
+                            let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), *toDeck.get());
                             fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
                             println!("Created file '{:?}'", path);
                           },
@@ -114,11 +115,30 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                       button {
                           onclick: move |_| {
                                                                      
-                              let mut path = "decks/".to_string();
-                              path.push_str(name.get());
-                              let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), true);
-                              fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
-                              println!("Created file '{:?}'", path);
+                              // let mut path = "decks/".to_string();
+                              // path.push_str(name.get());
+                              // let lackey_filu = to_lackey(&convert_cardinput(random_cards.get()), true);
+                              // fs::write(path.clone(), lackey_filu).expect("Unable to write file.");
+                              // println!("Created file '{:?}'", path);
+                              let shared_b = shared_boosters_main.read().0.to_owned();
+                              let mut sets_b = cx.props.sets.to_owned();
+                              let mut deck_cards = buy_boosters(&shared_b,
+                                                            &mut sets_b,
+                                                            false,
+                                                            vec![Colors::Black]);
+                              // Sort cards.
+                              deck_cards.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap()); 
+                              deck_cards.sort_by(|a, b| a.color.partial_cmp(&b.color).unwrap()); 
+                              let deck_images: Vec<_> = deck_cards.clone().into_iter().map(|card| ("sets/setimages/".to_owned() +
+                                                                                           &card.set.to_owned() + "/" + 
+                                                                                           &card.imagefile.to_owned() +
+                                                                                           ".jpg"
+                                                                                           )).collect();
+                              //deck_images.sort();
+                              shared_deck.set(deck_images);
+
+                              random_cards.set(deck_cards.clone());
+                              toDeck.modify(|x| false);
                           },
                           "Buy boosters"
                       }
@@ -154,6 +174,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                                   shared_deck.set(deck_images);
 
                                   random_cards.set(deck_cards.clone());
+                                  toDeck.modify(|x| true);
 
                               }
                               else { println!("Please choose at least one color."); }
