@@ -194,3 +194,13 @@ price = 1.5
 set = "onslaught"
 amount = 0
 price = 1.5
+
+[[boosters]]
+set = "legions"
+amount = 0
+price = 1.5
+
+[[boosters]]
+set = "scourge"
+amount = 0
+price = 1.5
