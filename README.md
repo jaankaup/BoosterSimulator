@@ -9,6 +9,8 @@ selecting sets/boosters. The implementation is currently in an early stage, but 
 Install Rust compiler and update Rust.
 Clone this repository and run following command.
 
-$ cargo build --release 
+```
+cargo build --release 
+```
 
 Copy the binary file, booster_config.toml and exclude.toml files to lackey mtg plugin folder.
