@@ -5,19 +5,19 @@ points = 80
 [[boosters]]
 set = "alpha"
 amount = 0
-price = 1.25
+price = 1.0
 
 # herjoja kortteja
 [[boosters]]
 set = "beta"
 amount = 0
-price = 1.25
+price = 1.0
 
 # herjoja kortteja
 [[boosters]]
 set = "unlimited"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "an"
@@ -32,7 +32,7 @@ price = 1.0
 [[boosters]]
 set = "revised"
 amount = 0
-price = 1.25
+price = 1.0
 
 # Hulluja moniväri ritareita ja muita legendoja
 [[boosters]]
@@ -102,17 +102,17 @@ price = 1.0
 [[boosters]]
 set = "tempest"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "stronghold"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "exodus"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "6e"
@@ -127,28 +127,28 @@ price = 0.75
 [[boosters]]
 set = "portal2"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "nemesis"
 amount = 0
-price = 1.25
+price = 1.0
 
 # Planeswalkers fury!!!
 [[boosters]]
 set = "planeshift"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "apocalypse"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "odyssey"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "uz"
@@ -173,34 +173,34 @@ price = 1.0
 [[boosters]]
 set = "prophecy"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "invasion"
 amount = 0
-price = 1.25
+price = 1.0
 
 [[boosters]]
 set = "torment"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "judgment"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "onslaught"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "legions"
 amount = 0
-price = 1.5
+price = 1.25
 
 [[boosters]]
 set = "scourge"
 amount = 0
-price = 1.5
+price = 1.25
