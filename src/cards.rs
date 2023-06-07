@@ -291,7 +291,8 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while rare_counter < rare_count {
             let ind = rng.gen_range(0..rares.len()); 
 
-            if random_deck && drop_card(&rares[ind], &exclude_list, &colors) { continue; }
+            //++ if random_deck && drop_card(&rares[ind], &exclude_list, &colors) { continue; }
+            if drop_card(&rares[ind], &exclude_list, &colors) { continue; }
 
             result_input_format.push(rares[ind].clone());
 
@@ -301,7 +302,8 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while uncommon_counter < uncommon_count {
             let ind = rng.gen_range(0..uncommons.len()); 
 
-            if random_deck && drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
+            //++ if random_deck && drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
+            if drop_card(&uncommons[ind], &exclude_list, &colors) { continue; }
 
             result_input_format.push(uncommons[ind].clone());
             uncommon_counter += 1;
@@ -310,7 +312,8 @@ pub fn buy_boosters<'a>(boosters: &'a Vec<Booster>, sets: &'a mut HashMap<String
         while common_counter < common_count {
             let ind = rng.gen_range(0..commons.len()); 
 
-            if random_deck && drop_card(&commons[ind], &exclude_list, &colors) { continue; }
+            //++ if random_deck && drop_card(&commons[ind], &exclude_list, &colors) { continue; }
+            if drop_card(&commons[ind], &exclude_list, &colors) { continue; }
 
             result_input_format.push(commons[ind].clone());
             common_counter += 1;

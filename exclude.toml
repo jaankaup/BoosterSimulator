@@ -15,7 +15,11 @@ exact_name = ["Island",
               "Story Circle",
               "Greater Realm of Preservation",
               "Goblin Game",
-              "Apocalypse Chime"
+              "Apocalypse Chime",
+              "Shivan Dragon",
+              "Light of Day",
+              "Millstone",
+              "Mind Twist"
 ]
 name_contains = ["Circle of Protection", "Rune of Protection"]
 

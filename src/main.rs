@@ -125,7 +125,7 @@ fn BoosterApp(cx: Scope<AppStateProps>) -> Element {
                               let mut deck_cards = buy_boosters(&shared_b,
                                                             &mut sets_b,
                                                             false,
-                                                            vec![Colors::Black]);
+                                                            vec![]);
                               // Sort cards.
                               deck_cards.sort_by(|a, b| a.name.partial_cmp(&b.name).unwrap()); 
                               deck_cards.sort_by(|a, b| a.color.partial_cmp(&b.color).unwrap()); 
