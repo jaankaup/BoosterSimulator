@@ -19,6 +19,7 @@ exact_name = ["Island",
               "Shivan Dragon",
               "Light of Day",
               "Millstone",
+			  "Chaos Orb",
               "Mind Twist"
 ]
 name_contains = ["Circle of Protection", "Rune of Protection"]
@@ -45,6 +46,10 @@ color = "W"
 
 [[exclude_color_contains]]
 name = "Virtue's Ruin"
+color = "W"
+
+[[exclude_color_contains]]
+name = "Dread of Night"
 color = "W"
 
 [[exclude_color_contains]]
@@ -87,6 +92,10 @@ color = "B"
 name = "Drought"
 color = "B"
 
+[[exclude_color_contains]]
+name = "Chill"
+color = "R"
+
 ### Require color or exclude ###
 [[exclude_color_required]]
 name = "Soul Burn"
@@ -95,6 +104,46 @@ color = "RB"
 [[exclude_color_required]]
 name = "Sunglasses of Urza"
 color = "RW"
+
+[[exclude_color_required]]
+name = "Seafarer's Quay"
+color = "U"
+
+[[exclude_color_required]]
+name = "Pearl Medallion"
+color = "W"
+
+[[exclude_color_required]]
+name = "Emerald Medallion"
+color = "G"
+
+[[exclude_color_required]]
+name = "Jet Medallion"
+color = "B"
+
+[[exclude_color_required]]
+name = "Adventurers' Guildhouse"
+color = "G"
+
+[[exclude_color_required]]
+name = "Mountain Stronghold"
+color = "R"
+
+[[exclude_color_required]]
+name = "Unholy Citadel"
+color = "B"
+
+[[exclude_color_required]]
+name = "Sapphire Medallion"
+color = "U"
+
+[[exclude_color_required]]
+name = "Ruby Medallion"
+color = "R"
+
+[[exclude_color_required]]
+name = "Cathedral of Serra"
+color = "W"
 
 # [[exclude_color_required]]
 # name = "Kormus Bell"
